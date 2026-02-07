@@ -3,153 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KAREM STORE | PRO SYSTEM</title>
+    <title>KAREM STORE | THE MASTER</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
     <style>
-        :root { --main: #ff0000; --bg: #000; --card: #111; --green: #2ecc71; --gray: #222; }
-        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; outline: none; }
-        body { background: var(--bg); color: #fff; margin: 0; padding-bottom: 70px; }
+        :root { --main: #ff0000; --bg: #000; --card: #0e0e0e; --green: #00ff00; --gray: #1a1a1a; }
+        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; transition: 0.3s; }
+        body { background: var(--bg); color: #fff; margin: 0; padding-bottom: 80px; overflow-x: hidden; }
 
         /* الهيدر */
-        header { background: #000; padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--gray); position: sticky; top: 0; z-index: 1000; }
-        .logo { font-weight: 900; font-size: 1.4rem; color: var(--main); }
-        .user-avatar { width: 35px; height: 35px; border-radius: 50%; border: 1px solid var(--main); object-fit: cover; }
+        header { background: #000; padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--main); position: sticky; top: 0; z-index: 1000; }
+        .logo { font-weight: 900; font-size: 1.5rem; color: var(--main); text-shadow: 0 0 10px var(--main); cursor: pointer; }
 
-        /* السلايدر المتحرك */
-        .slider { width: 95%; height: 160px; margin: 10px auto; border-radius: 15px; overflow: hidden; position: relative; }
-        .slides { display: flex; transition: 0.5s; height: 100%; }
+        /* السلايدر */
+        .slider { width: 95%; height: 160px; margin: 10px auto; border-radius: 15px; overflow: hidden; border: 1px solid var(--gray); }
+        .slides { display: flex; height: 100%; }
         .slides img { min-width: 100%; object-fit: cover; }
 
-        /* شاشة الوكيل */
-        .agent-card { background: var(--card); margin: 15px; padding: 15px; border-radius: 15px; display: flex; align-items: center; gap: 15px; border: 1px solid var(--gray); }
-        .agent-info h3 { margin: 0; font-size: 1rem; }
-        .agent-info p { margin: 5px 0 0; color: var(--green); font-weight: bold; }
+        /* بروفايل الوكيل */
+        .u-card { background: var(--card); margin: 15px; padding: 15px; border-radius: 15px; display: flex; align-items: center; gap: 15px; border: 1px solid var(--gray); border-right: 4px solid var(--main); }
+        .u-card img { width: 55px; height: 55px; border-radius: 50%; object-fit: cover; border: 2px solid var(--main); }
+        .u-info h3 { margin: 0; font-size: 1rem; }
+        .u-info p { margin: 5px 0 0; color: var(--green); font-weight: bold; }
 
-        /* المتجر */
-        .section-title { padding: 10px 20px; color: var(--main); font-weight: bold; }
-        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 0 15px; }
-        .product { background: var(--card); border-radius: 12px; padding: 10px; text-align: center; border: 1px solid var(--gray); }
-        .product img { width: 100%; aspect-ratio: 1/1; border-radius: 8px; object-fit: cover; }
-        .product h4 { font-size: 0.7rem; margin: 8px 0; height: 30px; overflow: hidden; }
-        .product b { color: var(--green); font-size: 0.8rem; }
+        /* شبكة الأقسام */
+        .grid-cats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 15px; }
+        .cat-box { background: var(--card); border-radius: 15px; padding: 20px; text-align: center; border: 1px solid var(--gray); cursor: pointer; }
+        .cat-box:hover { border-color: var(--main); background: #150000; }
+        .cat-box i { font-size: 2.5rem; color: var(--main); margin-bottom: 10px; }
 
-        /* لوحة التحكم */
-        .admin-zone { background: #0a0000; border: 1px solid var(--main); margin: 15px; padding: 15px; border-radius: 15px; }
-        input, select { width: 100%; padding: 12px; margin: 5px 0; background: #000; border: 1px solid #333; color: #fff; border-radius: 10px; }
-        .btn { width: 100%; padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; margin-top: 5px; }
+        /* شبكة المنتجات */
+        .grid-prods { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 15px; }
+        .prod-box { background: var(--card); border-radius: 12px; padding: 8px; text-align: center; border: 1px solid var(--gray); }
+        .prod-box img { width: 100%; aspect-ratio: 1/1; border-radius: 8px; object-fit: cover; }
+        .prod-box h4 { font-size: 0.75rem; margin: 5px 0; height: 32px; overflow: hidden; }
+        .prod-box b { color: var(--green); font-size: 0.85rem; }
+
+        /* لوحة المدير */
+        .adm-panel { background: #050505; border: 1px solid var(--main); margin: 15px; padding: 15px; border-radius: 20px; box-shadow: 0 0 20px rgba(255,0,0,0.1); }
+        .tabs { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 15px; padding-bottom: 5px; }
+        .tab-btn { background: var(--gray); color: #fff; border: none; padding: 8px 15px; border-radius: 10px; font-size: 0.75rem; white-space: nowrap; cursor: pointer; }
+        .tab-btn.active { background: var(--main); }
+
+        /* فورمات */
+        input, select { width: 100%; padding: 12px; margin: 6px 0; background: #000; border: 1px solid #333; color: #fff; border-radius: 10px; }
+        .btn { width: 100%; padding: 12px; border-radius: 12px; border: none; font-weight: 800; cursor: pointer; margin-top: 5px; }
         .btn-main { background: var(--main); color: #fff; }
         .btn-green { background: var(--green); color: #000; }
+        .btn-del { background: #ff3333; color: #fff; padding: 4px 8px; border-radius: 5px; font-size: 0.7rem; border: none; }
 
         /* المودالات */
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px; }
         .modal.active { display: flex; }
-        .modal-content { background: #111; width: 100%; max-width: 400px; padding: 20px; border-radius: 20px; border: 1px solid #333; }
+        .modal-content { background: #0a0a0a; width: 100%; max-width: 450px; padding: 25px; border-radius: 25px; border: 1px solid #333; }
+
+        /* لستة المستخدمين */
+        .user-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #111; margin-bottom: 5px; border-radius: 8px; border-left: 3px solid var(--main); }
 
         .hidden { display: none !important; }
-        .side-menu { position: fixed; top: 0; right: -100%; width: 80%; height: 100%; background: #000; z-index: 4000; transition: 0.3s; padding: 20px; border-left: 1px solid var(--gray); }
-        .side-menu.active { right: 0; }
+        #back { background: var(--gray); color: #fff; padding: 8px 15px; border-radius: 10px; margin: 10px 15px; display: inline-block; cursor: pointer; font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo">KAREM STORE</div>
-    <div id="userHeader" class="hidden" onclick="toggleMenu()">
-        <img id="myAvatarHead" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="user-avatar">
-    </div>
-    <i class="fa-solid fa-bars-staggered" style="font-size: 1.5rem;" onclick="toggleMenu()"></i>
+    <div class="logo" onclick="location.reload()">KAREM STORE</div>
+    <div id="topUser" class="hidden"><img id="hImg" src="" style="width:35px; height:35px; border-radius:50%; border:1px solid var(--main)"></div>
+    <i class="fa-solid fa-user-shield" style="font-size: 1.4rem;" onclick="openAuth()"></i>
 </header>
 
-<div class="slider">
-    <div class="slides" id="sliderContainer">
-        </div>
-</div>
+<div class="slider"><div class="slides" id="slideBox"></div></div>
 
-<div id="agentProfile" class="hidden">
-    <div class="agent-card">
-        <div style="position: relative;">
-            <img id="myAvatar" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover;">
-            <label for="imgInput" style="position: absolute; bottom: 0; right: 0; background: var(--main); border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 10px; cursor: pointer;"><i class="fa-solid fa-camera"></i></label>
-            <input type="file" id="imgInput" class="hidden" accept="image/*" onchange="updateMyPhoto()">
-        </div>
-        <div class="agent-info">
-            <h3 id="myName">--</h3>
-            <p>رصيدك: <span id="myBalance">0</span> ج</p>
-            <small id="myID" style="color:#888"></small>
+<div id="uArea" class="hidden">
+    <div class="u-card">
+        <img id="uImg" src="https://cdn-icons-png.flaticon.com/512/149/149071.png">
+        <div class="u-info">
+            <h3 id="un">--</h3>
+            <p><span id="ub">0</span> ج</p>
+            <small id="ui" style="color:#888"></small>
         </div>
     </div>
 </div>
 
-<div id="adminArea" class="hidden">
-    <div class="admin-zone">
-        <h3 style="margin:0 0 10px; color:var(--main)">🛠️ لوحة تحكم كريم</h3>
-        <button class="btn btn-main" onclick="showTab('addP')">إضافة منتج</button>
-        <button class="btn btn-main" onclick="showTab('manageB')">إضافة بنر</button>
-        <button class="btn btn-main" onclick="showTab('chargeA')">شحن وكلاء</button>
-        
-        <div id="addP" class="admin-tab hidden">
-            <input type="text" id="pName" placeholder="اسم المنتج">
-            <input type="number" id="pPrice" placeholder="سعر الوحدة">
-            <input type="file" id="pFile" accept="image/*">
-            <button class="btn btn-green" onclick="uploadProduct()">رفع للمتجر</button>
+<div id="admArea" class="hidden">
+    <div class="adm-panel">
+        <h3 style="color:var(--main); margin:0 0 10px;">🛠️ لوحة الإدارة العليا</h3>
+        <div class="tabs">
+            <button class="tab-btn active" onclick="tab('t1')">إضافة قسم</button>
+            <button class="tab-btn" onclick="tab('t2')">إضافة منتج</button>
+            <button class="tab-btn" onclick="tab('t3')">إدارة الأعضاء</button>
+            <button class="tab-btn" onclick="tab('t4')">شحن رصيد</button>
         </div>
-        <div id="manageB" class="admin-tab hidden">
-            <input type="file" id="bFile" accept="image/*">
-            <button class="btn btn-green" onclick="uploadBanner()">إضافة بنر متحرك</button>
+
+        <div id="t1" class="t-c">
+            <input type="text" id="cn" placeholder="اسم القسم">
+            <input type="text" id="ci" placeholder="أيقونة (مثل: fa-gamepad)">
+            <button class="btn btn-main" onclick="addCat()">حفظ القسم</button>
         </div>
-        <div id="chargeA" class="admin-tab hidden">
-            <input type="number" id="searchID" placeholder="ID الوكيل">
-            <button class="btn btn-main" onclick="searchAgent()">بحث</button>
-            <div id="searchRes" class="hidden">
-                <p id="resName"></p>
-                <input type="number" id="chargeAmt" placeholder="المبلغ">
-                <button class="btn btn-green" onclick="confirmCharge()">تأكيد الشحن</button>
+
+        <div id="t2" class="t-c hidden">
+            <select id="cp"></select>
+            <input type="text" id="pn" placeholder="اسم المنتج">
+            <input type="number" id="pp" placeholder="سعر الوحدة">
+            <input type="file" id="pf" accept="image/*">
+            <button class="btn btn-main" onclick="addProd()">نشر المنتج</button>
+        </div>
+
+        <div id="t3" class="t-c hidden">
+            <div style="background:#111; padding:10px; border-radius:10px; margin-bottom:15px;">
+                <h4 style="margin:0 0 10px;">➕ إنشاء أدمن جديد</h4>
+                <input type="text" id="an" placeholder="الاسم">
+                <input type="email" id="ae" placeholder="الإيميل">
+                <input type="password" id="ap" placeholder="الباسورد">
+                <button class="btn btn-green" onclick="createAdmin()">اعتماد أدمن</button>
+            </div>
+            <h4 style="color:var(--main)">👥 إدارة كافة المستخدمين:</h4>
+            <div id="usersList" style="max-height:200px; overflow-y:auto;"></div>
+        </div>
+
+        <div id="t4" class="t-c hidden">
+            <input type="number" id="sid" placeholder="ID الوكيل">
+            <button class="btn btn-green" onclick="findU()">بحث</button>
+            <div id="res" class="hidden">
+                <p id="rt"></p>
+                <input type="number" id="ra" placeholder="المبلغ">
+                <button class="btn btn-green" onclick="charge()">تأكيد الشحن</button>
             </div>
         </div>
     </div>
 </div>
 
-<div id="storeView">
-    <div class="section-title">📦 كافة المنتجات</div>
-    <div class="grid" id="mainGrid"></div>
+<div id="viewCats">
+    <div class="grid-cats" id="catsBox"></div>
+</div>
+
+<div id="viewProds" class="hidden">
+    <div id="back" onclick="goBack()"><i class="fa-solid fa-arrow-right"></i> رجوع للأقسام</div>
+    <h3 id="catTitle" style="padding:0 20px; color:var(--main)"></h3>
+    <div class="grid-prods" id="prodsBox"></div>
 </div>
 
 <div id="buyModal" class="modal">
     <div class="modal-content">
-        <h3 id="btitle"></h3>
-        <p>سعر الوحدة: <span id="bprice"></span> ج</p>
-        <label>الكمية:</label>
-        <input type="number" id="bqty" value="1" min="1" oninput="recalc()">
-        <h2 style="color:var(--green)">الإجمالي: <span id="btotal">0</span> ج</h2>
-        <div id="buyBtnContainer"></div>
-        <button class="btn" onclick="closeModal('buyModal')" style="background:#222; color:#fff; margin-top:10px;">إلغاء</button>
-    </div>
-</div>
-
-<div class="side-menu" id="sideMenu">
-    <div id="guestSide">
-        <button class="btn btn-main" onclick="openAuth()">دخول / تسجيل</button>
-    </div>
-    <div id="userSide" class="hidden">
-        <button class="btn btn-green" onclick="alert('تواصل مع المدير للشحن')">طلب شحن رصيد</button>
-        <button class="btn" style="background:#333; color:#fff; margin-top:50px;" onclick="location.reload()">تسجيل خروج</button>
+        <h3 id="bt"></h3>
+        <p>السعر: <span id="bp"></span> ج</p>
+        <input type="number" id="bq" value="1" min="1" oninput="calc()">
+        <h2 style="color:var(--green)">الإجمالي: <span id="btot">0</span> ج</h2>
+        <div id="bAct"></div>
+        <button class="btn" onclick="closeM('buyModal')" style="background:#222; color:#fff; margin-top:10px;">إلغاء</button>
     </div>
 </div>
 
 <div id="authModal" class="modal">
     <div class="modal-content">
-        <h3>تسجيل الدخول</h3>
-        <input type="text" id="regName" placeholder="الاسم (للمسجلين الجدد)">
-        <input type="email" id="regEmail" placeholder="البريد الإلكتروني">
-        <input type="password" id="regPass" placeholder="كلمة المرور">
-        <button class="btn btn-main" onclick="handleAuth()">دخول</button>
-        <button class="btn" onclick="closeModal('authModal')">إغلاق</button>
+        <h3>تسجيل الدخول / إنشاء حساب</h3>
+        <input type="text" id="rn" placeholder="الاسم (للتسجيل الجديد)">
+        <input type="email" id="re" placeholder="الإيميل">
+        <input type="password" id="rp" placeholder="الباسورد">
+        <button class="btn btn-main" onclick="auth()">دخول الآن</button>
+        <button class="btn" onclick="closeM('authModal')" style="background:transparent">إغلاق</button>
     </div>
 </div>
 
 <script>
+    // --- إعدادات Firebase ---
     const firebaseConfig = {
         apiKey: "AIzaSyAalmOWMUhvCi_PuFSUbXRpbe1hmGyer7s",
         authDomain: "karem-store.firebaseapp.com",
@@ -157,178 +175,193 @@
         projectId: "karem-store",
         storageBucket: "karem-store.firebasestorage.app",
         messagingSenderId: "898294902448",
-        appId: "1:898294902448:web:23cbee5afd72adcb67d575",
-        measurementId: "G-V56WJVTN4J"
+        appId: "1:898294902448:web:23cbee5afd72adcb67d575"
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    let user = null;
-    let selItem = null;
-    let targetEmail = '';
+    let user = null; let selP = null; let tMail = '';
 
-    function toggleMenu() { document.getElementById('sideMenu').classList.toggle('active'); }
-    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-    function openAuth() { document.getElementById('authModal').classList.add('active'); toggleMenu(); }
-    function showTab(id) { document.querySelectorAll('.admin-tab').forEach(t=>t.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); }
+    function closeM(id) { document.getElementById(id).classList.remove('active'); }
+    function openAuth() { document.getElementById('authModal').classList.add('active'); }
+    function tab(id) {
+        document.querySelectorAll('.t-c').forEach(t=>t.classList.add('hidden'));
+        document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+        document.getElementById(id).classList.remove('hidden');
+        event.target.classList.add('active');
+    }
+    function goBack() { document.getElementById('viewCats').classList.remove('hidden'); document.getElementById('viewProds').classList.add('hidden'); }
 
-    // نظام الدخول
-    function handleAuth() {
-        const email = document.getElementById('regEmail').value.replace(/\./g, '_').toLowerCase();
-        const pass = document.getElementById('regPass').value;
-        const name = document.getElementById('regName').value;
+    // --- الحسابات والإدارة ---
+    function auth() {
+        const e = document.getElementById('re').value.replace(/\./g, '_').toLowerCase();
+        const p = document.getElementById('rp').value;
+        const n = document.getElementById('rn').value;
 
-        if(email === 'admin@karem_com' && pass === '123456') {
-            login({ name: 'كريم (المدير)', email, uid: 1001, role: 'admin', balance: 0, photo: '' });
-            return;
+        if(e === 'admin@karem_com' && p === '123456') {
+            login({ name: 'كريم (المدير)', email: e, uid: '1001', role: 'admin', balance: 999999 }); return;
         }
 
-        db.ref('users/' + email).once('value', snap => {
-            if(snap.exists()) {
-                if(snap.val().pass === pass) login(snap.val());
-                else alert("خطأ في الباسورد");
+        db.ref('users/'+e).once('value', s => {
+            if(s.exists()) {
+                if(s.val().pass === p) login(s.val());
+                else alert("الباسورد خطأ");
             } else {
                 db.ref('lastID').transaction(c => {
-                    const next = (c || 1000) + 1;
-                    const u = { name, email, pass, balance:0, uid:next, role:'user', photo:'' };
-                    db.ref('users/'+email).set(u);
-                    db.ref('idMap/'+next).set(email);
-                    login(u); return next;
+                    const id = (c || 1000) + 1;
+                    const u = { name: n, email: e, pass: p, balance: 0, uid: id, role: 'user' };
+                    db.ref('users/'+e).set(u);
+                    db.ref('idMap/'+id).set(e);
+                    login(u); return id;
                 });
             }
         });
     }
 
     function login(d) {
-        user = d;
-        closeModal('authModal');
-        document.getElementById('userHeader').classList.remove('hidden');
-        document.getElementById('agentProfile').classList.remove('hidden');
-        document.getElementById('guestSide').classList.add('hidden');
-        document.getElementById('userSide').classList.remove('hidden');
-        document.getElementById('myName').innerText = d.name;
-        document.getElementById('myID').innerText = "كود الوكيل: " + d.uid;
-        if(d.photo) { document.getElementById('myAvatar').src = d.photo; document.getElementById('myAvatarHead').src = d.photo; }
-        
+        user = d; closeM('authModal');
+        document.getElementById('topUser').classList.remove('hidden');
+        document.getElementById('uArea').classList.remove('hidden');
+        document.getElementById('un').innerText = d.name;
+        document.getElementById('ui').innerText = "كود الوكيل: " + d.uid;
         db.ref('users/'+d.email+'/balance').on('value', s => {
             user.balance = s.val() || 0;
-            document.getElementById('myBalance').innerText = user.balance;
+            document.getElementById('ub').innerText = user.balance;
         });
-        
-        if(d.role === 'admin') document.getElementById('adminArea').classList.remove('hidden');
-        renderStore();
+        if(d.role === 'admin') {
+            document.getElementById('admArea').classList.remove('hidden');
+            loadUsers();
+        }
+        loadCats();
     }
 
-    // تحديث صورة الوكيل
-    function updateMyPhoto() {
-        const file = document.getElementById('imgInput').files[0];
+    function createAdmin() {
+        const e = document.getElementById('ae').value.replace(/\./g, '_').toLowerCase();
+        const p = document.getElementById('ap').value;
+        const n = document.getElementById('an').value;
+        db.ref('users/'+e).set({ name: n, email: e, pass: p, balance: 0, role: 'admin', uid: 'Admin' });
+        alert("تم إنشاء الأدمن بنجاح");
+    }
+
+    function loadUsers() {
+        db.ref('users').on('value', s => {
+            const list = document.getElementById('usersList'); list.innerHTML = "";
+            s.forEach(u => {
+                const ud = u.val();
+                list.innerHTML += `<div class="user-row">
+                    <span>${ud.name} (${ud.role})</span>
+                    <button class="btn-del" onclick="deleteUser('${ud.email}')">حذف</button>
+                </div>`;
+            });
+        });
+    }
+
+    function deleteUser(em) { if(confirm("حذف العضو نهائياً؟")) db.ref('users/'+em).remove(); }
+
+    // --- إدارة الأقسام والمنتجات ---
+    function addCat() {
+        const n = document.getElementById('cn').value;
+        const i = document.getElementById('ci').value || 'fa-box';
+        db.ref('categories').push({ name: n, icon: i }); alert("تم الحفظ");
+    }
+
+    function loadCats() {
+        db.ref('categories').on('value', s => {
+            const box = document.getElementById('catsBox'); box.innerHTML = "";
+            const sel = document.getElementById('cp'); sel.innerHTML = "";
+            s.forEach(c => {
+                const cd = c.val();
+                box.innerHTML += `<div class="cat-box" onclick="openCat('${c.key}', '${cd.name}')">
+                    <i class="fa-solid ${cd.icon}"></i><h3>${cd.name}</h3>
+                </div>`;
+                sel.innerHTML += `<option value="${c.key}">${cd.name}</option>`;
+            });
+        });
+    }
+
+    function addProd() {
+        const c = document.getElementById('cp').value;
+        const n = document.getElementById('pn').value;
+        const p = document.getElementById('pp').value;
+        const f = document.getElementById('pf').files[0];
         const r = new FileReader();
-        r.onload = e => {
-            db.ref('users/'+user.email).update({ photo: e.target.result });
-            document.getElementById('myAvatar').src = e.target.result;
-            document.getElementById('myAvatarHead').src = e.target.result;
-        };
-        r.readAsDataURL(file);
+        r.onload = e => db.ref('products/'+c).push({ n, p: Number(p), img: e.target.result });
+        r.readAsDataURL(f); alert("تم النشر");
     }
 
-    // المتجر والشراء
-    function renderStore() {
-        db.ref('products').on('value', snap => {
-            const grid = document.getElementById('mainGrid'); grid.innerHTML = "";
-            snap.forEach(s => {
-                const p = s.val();
+    function openCat(id, name) {
+        document.getElementById('viewCats').classList.add('hidden');
+        document.getElementById('viewProds').classList.remove('hidden');
+        document.getElementById('catTitle').innerText = name;
+        db.ref('products/'+id).on('value', s => {
+            const box = document.getElementById('prodsBox'); box.innerHTML = "";
+            s.forEach(p => {
+                const pd = p.val();
                 const div = document.createElement('div');
-                div.className = 'product';
-                div.innerHTML = `<img src="${p.img}"><h4>${p.n}</h4><b>${p.p} ج</b>`;
-                div.onclick = () => openBuy(p);
-                grid.appendChild(div);
+                div.className = 'prod-box';
+                div.innerHTML = `<img src="${pd.img}"><h4>${pd.n}</h4><b>${pd.p} ج</b>`;
+                div.onclick = () => openBuy(pd);
+                box.appendChild(div);
             });
         });
     }
 
     function openBuy(p) {
         if(!user) return openAuth();
-        selItem = p;
-        document.getElementById('buyModal').classList.add('active');
-        document.getElementById('btitle').innerText = p.n;
-        document.getElementById('bprice').innerText = p.p;
-        document.getElementById('bqty').value = 1;
-        recalc();
+        selP = p; document.getElementById('buyModal').classList.add('active');
+        document.getElementById('bt').innerText = p.n;
+        document.getElementById('bp').innerText = p.p;
+        document.getElementById('bq').value = 1; calc();
     }
 
-    function recalc() {
-        const q = document.getElementById('bqty').value;
-        const total = q * selItem.p;
-        document.getElementById('btotal').innerText = total;
-        const btnBox = document.getElementById('buyBtnContainer');
-        if(user.balance >= total) {
-            btnBox.innerHTML = `<button class="btn btn-green" onclick="confirmBuy(${total}, ${q})">تأكيد الشراء ✅</button>`;
-        } else {
-            btnBox.innerHTML = `<button class="btn btn-main" onclick="alert('رصيدك غير كافي')">اشحن رصيد لتتمكن من الشراء ⚠️</button>`;
-        }
+    function calc() {
+        const q = document.getElementById('bq').value;
+        const tot = q * selP.p;
+        document.getElementById('btot').innerText = tot;
+        const btn = document.getElementById('bAct');
+        if(user.balance >= tot) btn.innerHTML = `<button class="btn btn-green" onclick="buy(${tot},${q})">تأكيد الشراء ✅</button>`;
+        else btn.innerHTML = `<button class="btn" style="background:#333" disabled>رصيدك غير كافي ⚠️</button>`;
     }
 
-    function confirmBuy(total, q) {
-        if(confirm('سيتم خصم ' + total + ' ج من رصيدك')) {
-            db.ref('users/'+user.email).update({ balance: user.balance - total });
-            db.ref('orders').push({ user: user.name, id: user.uid, product: selItem.n, qty: q, total: total });
-            alert("تم الشراء بنجاح!");
-            closeModal('buyModal');
-        }
+    function buy(t, q) {
+        db.ref('users/'+user.email).update({ balance: user.balance - t });
+        db.ref('orders').push({ u: user.name, id: user.uid, p: selP.n, q: q, t: t, time: new Date().toLocaleString() });
+        alert("تمت العملية بنجاح!"); closeM('buyModal');
     }
 
-    // وظائف المدير
-    function uploadProduct() {
-        const n = document.getElementById('pName').value;
-        const p = document.getElementById('pPrice').value;
-        const f = document.getElementById('pFile').files[0];
-        const r = new FileReader();
-        r.onload = e => db.ref('products').push({ n, p: Number(p), img: e.target.result });
-        r.readAsDataURL(f); alert("تم الإضافة");
-    }
-
-    function uploadBanner() {
-        const f = document.getElementById('bFile').files[0];
-        const r = new FileReader();
-        r.onload = e => db.ref('banners').push(e.target.result);
-        r.readAsDataURL(f); alert("تم إضافة البنر");
-    }
-
-    function searchAgent() {
-        const id = document.getElementById('searchID').value;
-        db.ref('idMap/'+id).once('value', snap => {
-            if(!snap.exists()) return alert("ID خطأ");
-            targetEmail = snap.val();
-            db.ref('users/'+targetEmail).once('value', s => {
-                document.getElementById('searchRes').classList.remove('hidden');
-                document.getElementById('resName').innerText = "الوكيل: " + s.val().name + " (" + s.val().balance + " ج)";
+    // --- الشحن ---
+    function findU() {
+        const id = document.getElementById('sid').value;
+        db.ref('idMap/'+id).once('value', s => {
+            if(!s.exists()) return alert("غير موجود");
+            tMail = s.val();
+            db.ref('users/'+tMail).once('value', u => {
+                document.getElementById('res').classList.remove('hidden');
+                document.getElementById('rt').innerText = "الوكيل: " + u.val().name;
             });
         });
     }
-
-    function confirmCharge() {
-        const a = Number(document.getElementById('chargeAmt').value);
-        db.ref('users/'+targetEmail).once('value', s => {
-            db.ref('users/'+targetEmail).update({ balance: (s.val().balance||0) + a });
-            alert("تم الشحن");
+    function charge() {
+        const a = Number(document.getElementById('ra').value);
+        db.ref('users/'+tMail).once('value', s => {
+            db.ref('users/'+tMail).update({ balance: (s.val().balance||0)+a });
+            alert("تم الشحن!");
         });
     }
 
-    // السلايدر التلقائي (كل ثانيتين)
-    db.ref('banners').on('value', snap => {
-        const cont = document.getElementById('sliderContainer'); cont.innerHTML = "";
-        snap.forEach(s => cont.innerHTML += `<img src="${s.val()}">`);
+    // سلايدر
+    db.ref('banners').on('value', s => {
+        const box = document.getElementById('slideBox'); box.innerHTML = "";
+        s.forEach(b => box.innerHTML += `<img src="${b.val()}">`);
     });
-    let sIdx = 0;
     setInterval(() => {
-        const cont = document.getElementById('sliderContainer');
-        if(cont.children.length > 1) {
-            sIdx++; if(sIdx >= cont.children.length) sIdx = 0;
-            cont.style.transform = `translateX(${sIdx * 100}%)`;
+        const box = document.getElementById('slideBox');
+        if(box.children.length > 1) {
+            box.appendChild(box.firstElementChild);
         }
-    }, 2000);
+    }, 3000);
 
-    renderStore();
+    loadCats();
 </script>
 </body>
 </html>
