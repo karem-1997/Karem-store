@@ -3,47 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KAREM STORE | المنصة المتكاملة</title>
+    <title>KAREM STORE | PRO SYSTEM</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
     <style>
-        :root { --main: #ff0000; --bg: #050505; --card: #121212; --text: #ffffff; --green: #2ecc71; --gray: #222; }
-        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: var(--text); margin: 0; padding-bottom: 80px; }
-        
+        :root { --main: #ff0000; --bg: #000; --card: #111; --green: #2ecc71; --gray: #222; }
+        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; outline: none; }
+        body { background: var(--bg); color: #fff; margin: 0; padding-bottom: 70px; }
+
         /* الهيدر */
         header { background: #000; padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--gray); position: sticky; top: 0; z-index: 1000; }
         .logo { font-weight: 900; font-size: 1.4rem; color: var(--main); }
-        .user-stats { text-align: left; font-size: 0.8rem; }
+        .user-avatar { width: 35px; height: 35px; border-radius: 50%; border: 1px solid var(--main); object-fit: cover; }
 
-        /* السلايدر */
-        .slider { width: 95%; height: 160px; margin: 10px auto; border-radius: 15px; overflow: hidden; position: relative; border: 1px solid var(--gray); }
+        /* السلايدر المتحرك */
+        .slider { width: 95%; height: 160px; margin: 10px auto; border-radius: 15px; overflow: hidden; position: relative; }
         .slides { display: flex; transition: 0.5s; height: 100%; }
         .slides img { min-width: 100%; object-fit: cover; }
 
-        /* المتجر */
-        .section-header { padding: 15px; font-weight: bold; color: var(--main); font-size: 1.1rem; border-right: 4px solid var(--main); margin: 10px 15px; background: #0f0f0f; }
-        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 0 15px; }
-        .item-card { background: var(--card); border-radius: 12px; border: 1px solid var(--gray); padding: 8px; text-align: center; position: relative; }
-        .item-card img { width: 100%; border-radius: 8px; aspect-ratio: 1/1; object-fit: cover; }
-        .item-card h4 { font-size: 0.75rem; margin: 8px 0; height: 35px; overflow: hidden; color: #eee; }
-        .item-card b { color: var(--green); font-size: 0.85rem; }
+        /* شاشة الوكيل */
+        .agent-card { background: var(--card); margin: 15px; padding: 15px; border-radius: 15px; display: flex; align-items: center; gap: 15px; border: 1px solid var(--gray); }
+        .agent-info h3 { margin: 0; font-size: 1rem; }
+        .agent-info p { margin: 5px 0 0; color: var(--green); font-weight: bold; }
 
-        /* لوحة التحكم والتبويبات */
-        .admin-box { background: #0a0a0a; border: 1px solid var(--main); margin: 15px; padding: 15px; border-radius: 15px; }
-        input, select { width: 100%; padding: 12px; margin: 5px 0; background: #000; border: 1px solid #333; color: #fff; border-radius: 8px; }
-        .btn { width: 100%; padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; margin-top: 5px; transition: 0.3s; }
+        /* المتجر */
+        .section-title { padding: 10px 20px; color: var(--main); font-weight: bold; }
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 0 15px; }
+        .product { background: var(--card); border-radius: 12px; padding: 10px; text-align: center; border: 1px solid var(--gray); }
+        .product img { width: 100%; aspect-ratio: 1/1; border-radius: 8px; object-fit: cover; }
+        .product h4 { font-size: 0.7rem; margin: 8px 0; height: 30px; overflow: hidden; }
+        .product b { color: var(--green); font-size: 0.8rem; }
+
+        /* لوحة التحكم */
+        .admin-zone { background: #0a0000; border: 1px solid var(--main); margin: 15px; padding: 15px; border-radius: 15px; }
+        input, select { width: 100%; padding: 12px; margin: 5px 0; background: #000; border: 1px solid #333; color: #fff; border-radius: 10px; }
+        .btn { width: 100%; padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; margin-top: 5px; }
         .btn-main { background: var(--main); color: #fff; }
-        .btn-buy { background: var(--green); color: #000; }
-        
+        .btn-green { background: var(--green); color: #000; }
+
         /* المودالات */
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px; }
         .modal.active { display: flex; }
-        .modal-content { background: #111; width: 100%; max-width: 400px; padding: 25px; border-radius: 20px; border: 1px solid #333; }
+        .modal-content { background: #111; width: 100%; max-width: 400px; padding: 20px; border-radius: 20px; border: 1px solid #333; }
 
         .hidden { display: none !important; }
-        .side-menu { position: fixed; top: 0; right: -100%; width: 80%; height: 100%; background: #000; z-index: 3000; transition: 0.3s; padding: 20px; border-left: 1px solid var(--gray); }
+        .side-menu { position: fixed; top: 0; right: -100%; width: 80%; height: 100%; background: #000; z-index: 4000; transition: 0.3s; padding: 20px; border-left: 1px solid var(--gray); }
         .side-menu.active { right: 0; }
     </style>
 </head>
@@ -51,94 +56,96 @@
 
 <header>
     <div class="logo">KAREM STORE</div>
-    <div id="topStats" class="user-stats hidden">
-        <span id="headBal" style="color:var(--green)">0</span> ج<br>
-        <span id="headID" style="color:#888">ID: --</span>
+    <div id="userHeader" class="hidden" onclick="toggleMenu()">
+        <img id="myAvatarHead" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="user-avatar">
     </div>
     <i class="fa-solid fa-bars-staggered" style="font-size: 1.5rem;" onclick="toggleMenu()"></i>
 </header>
 
 <div class="slider">
     <div class="slides" id="sliderContainer">
-        <img src="https://img.freepik.com/premium-photo/gaming-banner-design_1143431-13.jpg">
+        </div>
+</div>
+
+<div id="agentProfile" class="hidden">
+    <div class="agent-card">
+        <div style="position: relative;">
+            <img id="myAvatar" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover;">
+            <label for="imgInput" style="position: absolute; bottom: 0; right: 0; background: var(--main); border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 10px; cursor: pointer;"><i class="fa-solid fa-camera"></i></label>
+            <input type="file" id="imgInput" class="hidden" accept="image/*" onchange="updateMyPhoto()">
+        </div>
+        <div class="agent-info">
+            <h3 id="myName">--</h3>
+            <p>رصيدك: <span id="myBalance">0</span> ج</p>
+            <small id="myID" style="color:#888"></small>
+        </div>
     </div>
 </div>
 
-<div id="adminPanel" class="hidden">
-    <div class="admin-box">
-        <h3 style="color:var(--main); margin:0 0 10px;">🛠️ إدارة المنصة</h3>
-        <div id="adminTabs">
-            <button class="btn btn-main" onclick="openAdminTab('addP')">إضافة منتج</button>
-            <button class="btn btn-main" onclick="openAdminTab('orders')">الطلبات الواردة</button>
-            <button class="btn btn-main" onclick="openAdminTab('users')">شحن الوكلاء</button>
-        </div>
-
+<div id="adminArea" class="hidden">
+    <div class="admin-zone">
+        <h3 style="margin:0 0 10px; color:var(--main)">🛠️ لوحة تحكم كريم</h3>
+        <button class="btn btn-main" onclick="showTab('addP')">إضافة منتج</button>
+        <button class="btn btn-main" onclick="showTab('manageB')">إضافة بنر</button>
+        <button class="btn btn-main" onclick="showTab('chargeA')">شحن وكلاء</button>
+        
         <div id="addP" class="admin-tab hidden">
             <input type="text" id="pName" placeholder="اسم المنتج">
             <input type="number" id="pPrice" placeholder="سعر الوحدة">
-            <select id="pCat">
-                <option value="games">العاب</option>
-                <option value="apps">برامج</option>
-            </select>
             <input type="file" id="pFile" accept="image/*">
-            <button class="btn btn-buy" onclick="uploadProduct()">حفظ المنتج</button>
+            <button class="btn btn-green" onclick="uploadProduct()">رفع للمتجر</button>
         </div>
-
-        <div id="orders" class="admin-tab hidden">
-            <h4>قائمة الطلبات:</h4>
-            <div id="ordersList" style="font-size:0.8rem;"></div>
+        <div id="manageB" class="admin-tab hidden">
+            <input type="file" id="bFile" accept="image/*">
+            <button class="btn btn-green" onclick="uploadBanner()">إضافة بنر متحرك</button>
         </div>
-
-        <div id="users" class="admin-tab hidden">
-            <input type="number" id="targetID" placeholder="ID الوكيل">
+        <div id="chargeA" class="admin-tab hidden">
+            <input type="number" id="searchID" placeholder="ID الوكيل">
             <button class="btn btn-main" onclick="searchAgent()">بحث</button>
-            <div id="agentInfo" class="hidden">
-                <p id="agentDetail"></p>
-                <input type="number" id="addAmt" placeholder="المبلغ">
-                <button class="btn btn-buy" onclick="confirmCharge()">إضافة الرصيد</button>
+            <div id="searchRes" class="hidden">
+                <p id="resName"></p>
+                <input type="number" id="chargeAmt" placeholder="المبلغ">
+                <button class="btn btn-green" onclick="confirmCharge()">تأكيد الشحن</button>
             </div>
         </div>
     </div>
 </div>
 
 <div id="storeView">
-    <div class="section-header">🎮 الألعاب</div>
-    <div class="grid" id="gamesGrid"></div>
-    <div class="section-header">📱 البرامج</div>
-    <div class="grid" id="appsGrid"></div>
+    <div class="section-title">📦 كافة المنتجات</div>
+    <div class="grid" id="mainGrid"></div>
 </div>
 
 <div id="buyModal" class="modal">
     <div class="modal-content">
-        <h3 id="buyTitle">--</h3>
-        <p>سعر الوحدة: <span id="unitPrice">0</span> ج</p>
-        <label>الكمية المطلوبة:</label>
-        <input type="number" id="buyQty" value="1" min="1" oninput="calcTotal()">
-        <div style="margin: 15px 0; font-size: 1.2rem;">الإجمالي: <b id="totalPrice" style="color:var(--green)">0</b> ج</div>
-        <div id="buyAction"></div>
-        <button class="btn" style="background:#333; color:#fff;" onclick="closeModal('buyModal')">إغلاق</button>
+        <h3 id="btitle"></h3>
+        <p>سعر الوحدة: <span id="bprice"></span> ج</p>
+        <label>الكمية:</label>
+        <input type="number" id="bqty" value="1" min="1" oninput="recalc()">
+        <h2 style="color:var(--green)">الإجمالي: <span id="btotal">0</span> ج</h2>
+        <div id="buyBtnContainer"></div>
+        <button class="btn" onclick="closeModal('buyModal')" style="background:#222; color:#fff; margin-top:10px;">إلغاء</button>
     </div>
 </div>
 
 <div class="side-menu" id="sideMenu">
-    <div id="guestMenu">
-        <button class="btn btn-main" onclick="openAuth()">تسجيل دخول / إنشاء حساب</button>
+    <div id="guestSide">
+        <button class="btn btn-main" onclick="openAuth()">دخول / تسجيل</button>
     </div>
-    <div id="userMenu" class="hidden">
-        <h3 id="menuName">--</h3>
-        <p id="menuID"></p>
-        <button class="btn" style="background:#333; color:white; margin-top:50px;" onclick="location.reload()">تسجيل خروج</button>
+    <div id="userSide" class="hidden">
+        <button class="btn btn-green" onclick="alert('تواصل مع المدير للشحن')">طلب شحن رصيد</button>
+        <button class="btn" style="background:#333; color:#fff; margin-top:50px;" onclick="location.reload()">تسجيل خروج</button>
     </div>
 </div>
 
 <div id="authModal" class="modal">
     <div class="modal-content">
-        <h3 id="authTitle">دخول الوكلاء</h3>
+        <h3>تسجيل الدخول</h3>
         <input type="text" id="regName" placeholder="الاسم (للمسجلين الجدد)">
         <input type="email" id="regEmail" placeholder="البريد الإلكتروني">
         <input type="password" id="regPass" placeholder="كلمة المرور">
         <button class="btn btn-main" onclick="handleAuth()">دخول</button>
-        <button class="btn" style="background:transparent; border:1px solid #444; color:#fff" onclick="closeModal('authModal')">إلغاء</button>
+        <button class="btn" onclick="closeModal('authModal')">إغلاق</button>
     </div>
 </div>
 
@@ -153,41 +160,37 @@
         appId: "1:898294902448:web:23cbee5afd72adcb67d575",
         measurementId: "G-V56WJVTN4J"
     };
-
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
     let user = null;
-    let selectedItem = null;
-    let foundEmail = '';
+    let selItem = null;
+    let targetEmail = '';
 
     function toggleMenu() { document.getElementById('sideMenu').classList.toggle('active'); }
     function closeModal(id) { document.getElementById(id).classList.remove('active'); }
     function openAuth() { document.getElementById('authModal').classList.add('active'); toggleMenu(); }
-    function openAdminTab(id) {
-        document.querySelectorAll('.admin-tab').forEach(t => t.classList.add('hidden'));
-        document.getElementById(id).classList.remove('hidden');
-    }
+    function showTab(id) { document.querySelectorAll('.admin-tab').forEach(t=>t.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); }
 
-    // --- نظام الدخول ---
+    // نظام الدخول
     function handleAuth() {
         const email = document.getElementById('regEmail').value.replace(/\./g, '_').toLowerCase();
         const pass = document.getElementById('regPass').value;
         const name = document.getElementById('regName').value;
 
         if(email === 'admin@karem_com' && pass === '123456') {
-            const admin = { name: 'كريم (المدير)', email, uid: 1001, role: 'admin', balance: 0 };
-            login(admin); return;
+            login({ name: 'كريم (المدير)', email, uid: 1001, role: 'admin', balance: 0, photo: '' });
+            return;
         }
 
         db.ref('users/' + email).once('value', snap => {
             if(snap.exists()) {
                 if(snap.val().pass === pass) login(snap.val());
-                else alert("خطأ في كلمة المرور");
+                else alert("خطأ في الباسورد");
             } else {
                 db.ref('lastID').transaction(c => {
                     const next = (c || 1000) + 1;
-                    const u = { name, email, pass, balance:0, uid:next, role:'user' };
+                    const u = { name, email, pass, balance:0, uid:next, role:'user', photo:'' };
                     db.ref('users/'+email).set(u);
                     db.ref('idMap/'+next).set(email);
                     login(u); return next;
@@ -199,132 +202,132 @@
     function login(d) {
         user = d;
         closeModal('authModal');
-        document.getElementById('topStats').classList.remove('hidden');
-        document.getElementById('guestMenu').classList.add('hidden');
-        document.getElementById('userMenu').classList.remove('hidden');
-        document.getElementById('menuName').innerText = d.name;
-        document.getElementById('menuID').innerText = "ID: " + d.uid;
-        document.getElementById('headID').innerText = "ID: " + d.uid;
+        document.getElementById('userHeader').classList.remove('hidden');
+        document.getElementById('agentProfile').classList.remove('hidden');
+        document.getElementById('guestSide').classList.add('hidden');
+        document.getElementById('userSide').classList.remove('hidden');
+        document.getElementById('myName').innerText = d.name;
+        document.getElementById('myID').innerText = "كود الوكيل: " + d.uid;
+        if(d.photo) { document.getElementById('myAvatar').src = d.photo; document.getElementById('myAvatarHead').src = d.photo; }
         
         db.ref('users/'+d.email+'/balance').on('value', s => {
             user.balance = s.val() || 0;
-            document.getElementById('headBal').innerText = user.balance;
+            document.getElementById('myBalance').innerText = user.balance;
         });
         
-        if(d.role === 'admin') {
-            document.getElementById('adminPanel').classList.remove('hidden');
-            listenOrders();
-        }
+        if(d.role === 'admin') document.getElementById('adminArea').classList.remove('hidden');
         renderStore();
     }
 
-    // --- نظام المتجر والشراء ---
+    // تحديث صورة الوكيل
+    function updateMyPhoto() {
+        const file = document.getElementById('imgInput').files[0];
+        const r = new FileReader();
+        r.onload = e => {
+            db.ref('users/'+user.email).update({ photo: e.target.result });
+            document.getElementById('myAvatar').src = e.target.result;
+            document.getElementById('myAvatarHead').src = e.target.result;
+        };
+        r.readAsDataURL(file);
+    }
+
+    // المتجر والشراء
     function renderStore() {
-        ['games', 'apps'].forEach(cat => {
-            db.ref('products/'+cat).on('value', snap => {
-                const grid = document.getElementById(cat+'Grid');
-                grid.innerHTML = "";
-                snap.forEach(s => {
-                    const p = s.val();
-                    const card = document.createElement('div');
-                    card.className = 'item-card';
-                    card.innerHTML = `<img src="${p.img}"><h4>${p.n}</h4><b>${p.p} ج</b>`;
-                    card.onclick = () => openBuy(p, s.key, cat);
-                    grid.appendChild(card);
-                });
+        db.ref('products').on('value', snap => {
+            const grid = document.getElementById('mainGrid'); grid.innerHTML = "";
+            snap.forEach(s => {
+                const p = s.val();
+                const div = document.createElement('div');
+                div.className = 'product';
+                div.innerHTML = `<img src="${p.img}"><h4>${p.n}</h4><b>${p.p} ج</b>`;
+                div.onclick = () => openBuy(p);
+                grid.appendChild(div);
             });
         });
     }
 
-    function openBuy(p, key, cat) {
+    function openBuy(p) {
         if(!user) return openAuth();
-        selectedItem = { ...p, key, cat };
+        selItem = p;
         document.getElementById('buyModal').classList.add('active');
-        document.getElementById('buyTitle').innerText = p.n;
-        document.getElementById('unitPrice').innerText = p.p;
-        document.getElementById('buyQty').value = 1;
-        calcTotal();
+        document.getElementById('btitle').innerText = p.n;
+        document.getElementById('bprice').innerText = p.p;
+        document.getElementById('bqty').value = 1;
+        recalc();
     }
 
-    function calcTotal() {
-        const qty = document.getElementById('buyQty').value;
-        const total = qty * selectedItem.p;
-        document.getElementById('totalPrice').innerText = total;
-        
-        const actionDiv = document.getElementById('buyAction');
+    function recalc() {
+        const q = document.getElementById('bqty').value;
+        const total = q * selItem.p;
+        document.getElementById('btotal').innerText = total;
+        const btnBox = document.getElementById('buyBtnContainer');
         if(user.balance >= total) {
-            actionDiv.innerHTML = `<button class="btn btn-buy" onclick="confirmPurchase(${total}, ${qty})">تأكيد الشراء الآن ✅</button>`;
+            btnBox.innerHTML = `<button class="btn btn-green" onclick="confirmBuy(${total}, ${q})">تأكيد الشراء ✅</button>`;
         } else {
-            actionDiv.innerHTML = `<button class="btn btn-main" onclick="alert('تواصل مع المدير لشحن رصيدك')">رصيدك لا يكفي - اشحن الآن ⚠️</button>`;
+            btnBox.innerHTML = `<button class="btn btn-main" onclick="alert('رصيدك غير كافي')">اشحن رصيد لتتمكن من الشراء ⚠️</button>`;
         }
     }
 
-    function confirmPurchase(total, qty) {
-        if(confirm(`هل تريد شراء ${qty} من ${selectedItem.n} بإجمالي ${total} ج؟`)) {
-            const newBal = user.balance - total;
-            db.ref('users/'+user.email).update({ balance: newBal });
-            db.ref('orders').push({
-                uName: user.name,
-                uID: user.uid,
-                pName: selectedItem.n,
-                qty: qty,
-                total: total,
-                time: new Date().toLocaleString()
-            });
-            alert("تم إرسال طلبك بنجاح!");
+    function confirmBuy(total, q) {
+        if(confirm('سيتم خصم ' + total + ' ج من رصيدك')) {
+            db.ref('users/'+user.email).update({ balance: user.balance - total });
+            db.ref('orders').push({ user: user.name, id: user.uid, product: selItem.n, qty: q, total: total });
+            alert("تم الشراء بنجاح!");
             closeModal('buyModal');
         }
     }
 
-    // --- وظائف المدير ---
+    // وظائف المدير
     function uploadProduct() {
         const n = document.getElementById('pName').value;
         const p = document.getElementById('pPrice').value;
-        const c = document.getElementById('pCat').value;
-        const file = document.getElementById('pFile').files[0];
-        if(!n || !p || !file) return alert("اكمل البيانات");
+        const f = document.getElementById('pFile').files[0];
         const r = new FileReader();
-        r.onload = e => db.ref('products/'+c).push({ n, p: Number(p), img: e.target.result });
-        r.readAsDataURL(file);
-        alert("تم الإضافة");
+        r.onload = e => db.ref('products').push({ n, p: Number(p), img: e.target.result });
+        r.readAsDataURL(f); alert("تم الإضافة");
     }
 
-    function listenOrders() {
-        db.ref('orders').on('value', snap => {
-            const list = document.getElementById('ordersList');
-            list.innerHTML = "";
-            snap.forEach(s => {
-                const o = s.val();
-                list.innerHTML += `<div style="border:1px solid #333; padding:5px; margin-bottom:5px;">
-                    <b>${o.uName} (${o.uID})</b> اشترى ${o.qty} من ${o.pName} <br> الإجمالي: ${o.total} ج <br> <small>${o.time}</small>
-                    <button onclick="this.parentElement.remove()" style="background:red; color:#fff; border:none; padding:2px 5px; border-radius:5px; float:left;">حذف</button>
-                </div>`;
-            });
-        });
+    function uploadBanner() {
+        const f = document.getElementById('bFile').files[0];
+        const r = new FileReader();
+        r.onload = e => db.ref('banners').push(e.target.result);
+        r.readAsDataURL(f); alert("تم إضافة البنر");
     }
 
     function searchAgent() {
-        const id = document.getElementById('targetID').value;
+        const id = document.getElementById('searchID').value;
         db.ref('idMap/'+id).once('value', snap => {
-            if(!snap.exists()) return alert("ID غير موجود");
-            foundEmail = snap.val();
-            db.ref('users/'+foundEmail).once('value', s => {
-                document.getElementById('agentInfo').classList.remove('hidden');
-                document.getElementById('agentDetail').innerText = "الوكيل: " + s.val().name + " | رصيده: " + s.val().balance;
+            if(!snap.exists()) return alert("ID خطأ");
+            targetEmail = snap.val();
+            db.ref('users/'+targetEmail).once('value', s => {
+                document.getElementById('searchRes').classList.remove('hidden');
+                document.getElementById('resName').innerText = "الوكيل: " + s.val().name + " (" + s.val().balance + " ج)";
             });
         });
     }
 
     function confirmCharge() {
-        const amt = Number(document.getElementById('addAmt').value);
-        db.ref('users/'+foundEmail).once('value', s => {
-            db.ref('users/'+foundEmail).update({ balance: (s.val().balance || 0) + amt });
-            alert("تم الشحن!");
-            document.getElementById('agentResult').classList.add('hidden');
+        const a = Number(document.getElementById('chargeAmt').value);
+        db.ref('users/'+targetEmail).once('value', s => {
+            db.ref('users/'+targetEmail).update({ balance: (s.val().balance||0) + a });
+            alert("تم الشحن");
         });
     }
 
-    // تشغيل عام
+    // السلايدر التلقائي (كل ثانيتين)
+    db.ref('banners').on('value', snap => {
+        const cont = document.getElementById('sliderContainer'); cont.innerHTML = "";
+        snap.forEach(s => cont.innerHTML += `<img src="${s.val()}">`);
+    });
+    let sIdx = 0;
+    setInterval(() => {
+        const cont = document.getElementById('sliderContainer');
+        if(cont.children.length > 1) {
+            sIdx++; if(sIdx >= cont.children.length) sIdx = 0;
+            cont.style.transform = `translateX(${sIdx * 100}%)`;
+        }
+    }, 2000);
+
     renderStore();
 </script>
 </body>
