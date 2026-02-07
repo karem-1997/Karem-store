@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KAREM STORE | نظام الأكواد السحابي</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
+
+    <style>
+        :root { --bg: #050505; --card: #121212; --accent: #ff0000; --green: #2ecc71; --blue: #3498db; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg); color: white; margin: 0; padding-bottom: 100px; }
+
+        header { background: #000; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 1000; }
+        .logo { font-weight: 900; font-size: 1.4rem; color: var(--accent); }
+        .id-badge { background: #222; padding: 4px 10px; border-radius: 8px; font-size: 0.8rem; border: 1px solid #444; color: #bbb; }
+
+        /* القائمة الجانبية */
+        .side-menu { position: fixed; top: 0; right: -100%; width: 85%; height: 100%; background: #000; z-index: 3000; transition: 0.4s; border-left: 1px solid #222; }
+        .side-menu.active { right: 0; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2500; display: none; }
+        .overlay.active { display: block; }
+        
+        .menu-header { padding: 40px 25px; text-align: center; border-bottom: 1px solid #111; }
+        .menu-item { display: flex; align-items: center; gap: 15px; padding: 18px 25px; color: #eee; cursor: pointer; border-bottom: 1px solid #111; }
+        .menu-item i { color: var(--accent); width: 20px; }
+
+        /* لوحة التحكم */
+        .admin-box { background: #0a0a0a; border: 1px solid var(--blue); margin: 15px; padding: 15px; border-radius: 15px; }
+        .search-area { background: #111; padding: 10px; border-radius: 12px; margin-bottom: 15px; }
+        
+        /* المتجر */
+        .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; padding: 15px; }
+        .p-card { background: var(--card); border-radius: 15px; border: 1px solid #222; overflow: hidden; text-align: center; padding-bottom: 8px; }
+        .p-card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
+        .p-card h4 { font-size: 0.7rem; margin: 5px; height: 20px; overflow: hidden; }
+        .p-card b { color: var(--accent); font-size: 0.8rem; }
+
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 4000; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .modal.active { display: flex; }
+        .modal-box { background: #111; width: 100%; max-width: 400px; padding: 25px; border-radius: 25px; border: 1px solid #333; }
+        
+        input { width: 100%; padding: 12px; margin: 8px 0; background: #000; border: 1px solid #333; color: white; border-radius: 10px; }
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 5px; }
+        .btn-blue { background: var(--blue); color: white; }
+        .btn-green { background: var(--green); color: black; }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">KAREM</div>
+    <div id="topID" class="id-badge hidden">كودك: <span id="myIDDisplay">--</span></div>
+    <i class="fa-solid fa-bars-staggered" onclick="toggleMenu()"></i>
+</header>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+<div class="side-menu" id="sideMenu">
+    <div class="menu-header">
+        <h3 id="mName">زائر</h3>
+        <p id="mIDText" style="color: var(--blue);">سجل حسابك الآن</p>
+        <h2 id="mBal" style="color: var(--green); margin: 10px 0;">0.00 ج</h2>
+    </div>
+    <div class="menu-item" onclick="toggleMenu()"><i class="fa-solid fa-house"></i> الرئيسية</div>
+    <div id="authBtn" class="menu-item" onclick="showModal('authModal')"><i class="fa-solid fa-user-plus"></i> إنشاء حساب / دخول</div>
+    <div id="chargeBtn" class="menu-item hidden" onclick="showModal('chargeModal')"><i class="fa-solid fa-wallet"></i> شحن رصيد</div>
+    <div class="menu-item" onclick="logout()"><i class="fa-solid fa-power-off"></i> خروج</div>
+</div>
+
+<div class="container">
+    <div id="adminPanel" class="hidden">
+        <div class="admin-box">
+            <h3>🔍 إدارة الوكلاء (شحن رصيد)</h3>
+            <div class="search-area">
+                <input type="number" id="searchID" placeholder="اكتب ID الوكيل هنا">
+                <button class="btn btn-blue" onclick="searchAgent()">بحث عن الوكيل</button>
+            </div>
+            <div id="agentResult" class="hidden" style="background: #000; padding: 15px; border-radius: 10px;">
+                <p>الاسم: <b id="resName">--</b></p>
+                <p>الرصيد الحالي: <b id="resBal">0</b> ج</p>
+                <input type="number" id="addAmt" placeholder="المبلغ المراد إضافته">
+                <button class="btn btn-green" onclick="addBalanceToAgent()">إضافة الرصيد الآن ✅</button>
+            </div>
+        </div>
+        <div class="admin-box" style="border-color: #444;">
+            <h3>📥 طلبات السكرين شوت</h3>
+            <div id="depList"></div>
+        </div>
+    </div>
+
+    <div class="grid" id="storeGrid"></div>
+</div>
+
+<div id="authModal" class="modal">
+    <div class="modal-box">
+        <h3>دخول الحساب</h3>
+        <input type="email" id="email" placeholder="البريد الإلكتروني">
+        <input type="text" id="nickName" placeholder="الاسم (للحساب الجديد)">
+        <input type="password" id="pass" placeholder="كلمة المرور">
+        <button class="btn btn-blue" onclick="handleAuth()">دخول / إنشاء</button>
+        <button class="btn" onclick="closeModal('authModal')">إلغاء</button>
+    </div>
+</div>
+
+<div id="chargeModal" class="modal">
+    <div class="modal-box">
+        <h3>شحن المحفظة</h3>
+        <input type="number" id="cAmount" placeholder="المبلغ">
+        <input type="file" id="cFile" accept="image/*">
+        <button class="btn btn-green" onclick="uploadScreenshot()">إرسال السكرين شوت</button>
+        <button class="btn" onclick="closeModal('chargeModal')">إلغاء</button>
+    </div>
+</div>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyAalmOWMUhvCi_PuFSUbXRpbe1hmGyer7s",
+        authDomain: "karem-store.firebaseapp.com",
+        databaseURL: "https://karem-store-default-rtdb.firebaseio.com",
+        projectId: "karem-store",
+        storageBucket: "karem-store.firebasestorage.app",
+        messagingSenderId: "898294902448",
+        appId: "1:898294902448:web:23cbee5afd72adcb67d575",
+        measurementId: "G-V56WJVTN4J"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    let user = null;
+    let foundAgent = null;
+
+    function toggleMenu() { document.getElementById('sideMenu').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+    function showModal(id) { document.getElementById(id).classList.add('active'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+    // --- نظام الدخول والـ ID التلقائي ---
+    function handleAuth() {
+        const mail = document.getElementById('email').value.replace(/\./g, '_');
+        const name = document.getElementById('nickName').value;
+        const password = document.getElementById('pass').value;
+
+        db.ref('users/' + mail).once('value', (snap) => {
+            if(snap.exists()) {
+                const data = snap.val();
+                if(data.pass === password) login(data);
+                else alert("خطأ في الباسورد");
+            } else {
+                // إنشاء ID جديد
+                db.ref('lastID').transaction((curr) => {
+                    const nextID = (curr || 1000) + 1;
+                    const newUser = { email: mail, name: name||'عميل', pass: password, balance: 0, uid: nextID, role: (name==='karem'?'admin':'user') };
+                    db.ref('users/' + mail).set(newUser);
+                    db.ref('idMap/' + nextID).set(mail); // خريطة لتسهيل البحث بالـ ID
+                    login(newUser);
+                    return nextID;
+                });
+            }
+        });
+    }
+
+    function login(data) {
+        user = data;
+        closeModal('authModal');
+        document.getElementById('topID').classList.remove('hidden');
+        document.getElementById('myIDDisplay').innerText = data.uid;
+        document.getElementById('mName').innerText = data.name;
+        document.getElementById('mIDText').innerText = "كودك: " + data.uid;
+        document.getElementById('authBtn').classList.add('hidden');
+        document.getElementById('chargeBtn').classList.remove('hidden');
+        
+        db.ref('users/' + data.email + '/balance').on('value', (s) => {
+            document.getElementById('mBal').innerText = (s.val() || 0).toFixed(2) + " ج";
+        });
+
+        if(data.role === 'admin') {
+            document.getElementById('adminPanel').classList.remove('hidden');
+            listenDeposits();
+        }
+    }
+
+    // --- بحث المدير عن وكيل بالـ ID ---
+    function searchAgent() {
+        const id = document.getElementById('searchID').value;
+        db.ref('idMap/' + id).once('value', (snap) => {
+            if(!snap.exists()) return alert("هذا الكود غير موجود!");
+            const email = snap.val();
+            db.ref('users/' + email).once('value', (s) => {
+                foundAgent = s.val();
+                document.getElementById('agentResult').classList.remove('hidden');
+                document.getElementById('resName').innerText = foundAgent.name;
+                document.getElementById('resBal').innerText = foundAgent.balance;
+            });
+        });
+    }
+
+    function addBalanceToAgent() {
+        const amt = Number(document.getElementById('addAmt').value);
+        if(!amt) return;
+        const newBal = (foundAgent.balance || 0) + amt;
+        db.ref('users/' + foundAgent.email).update({ balance: newBal });
+        alert("تم إضافة الرصيد بنجاح!");
+        document.getElementById('agentResult').classList.add('hidden');
+    }
+
+    // --- شحن سكرين شوت ---
+    function uploadScreenshot() {
+        const amt = Number(document.getElementById('cAmount').value);
+        const file = document.getElementById('cFile').files[0];
+        const r = new FileReader();
+        r.onload = (e) => {
+            db.ref('deposits/' + Date.now()).set({ user: user.email, name: user.name, uid: user.uid, amount: amt, img: e.target.result });
+            alert("تم الإرسال للمراجعة");
+            closeModal('chargeModal');
+        };
+        r.readAsDataURL(file);
+    }
+
+    function listenDeposits() {
+        db.ref('deposits').on('value', (snap) => {
+            const div = document.getElementById('depList');
+            div.innerHTML = "";
+            snap.forEach(s => {
+                const d = s.val();
+                div.innerHTML += `<div class="req-card" style="background:#000; padding:10px; margin-top:10px; border-radius:10px; border:1px solid #333;">
+                    كود: ${d.uid} | ${d.name} (${d.amount}ج)
+                    <img src="${d.img}" style="width:100%; margin:10px 0;">
+                    <button class="btn btn-green" onclick="approveScreenshot('${d.user}', ${d.amount}, ${s.key})">قبول الرصيد</button>
+                </div>`;
+            });
+        });
+    }
+
+    function approveScreenshot(mail, amt, key) {
+        db.ref('users/' + mail).once('value', (s) => {
+            db.ref('users/' + mail).update({ balance: (s.val().balance || 0) + amt });
+            db.ref('deposits/' + key).remove();
+        });
+    }
+
+    function logout() { location.reload(); }
+
+    // عرض متجر بسيط
+    function render() {
+        const items = [
+            {n:'ببجي 60 شدة', p:48, i:'https://via.placeholder.com/100/111/ff0000?text=PUBG'},
+            {n:'فرى فاير 100 جوهرة', p:35, i:'https://via.placeholder.com/100/111/ff0000?text=FF'}
+        ];
+        document.getElementById('storeGrid').innerHTML = items.map(p => `
+            <div class="p-card">
+                <img src="${p.i}">
+                <h4>${p.n}</h4>
+                <b>${p.p} ج</b>
+            </div>`).join("");
+    }
+    render();
+</script>
+</body>
+</html>
+
