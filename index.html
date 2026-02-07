@@ -3,67 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KAREM STORE | الشامل النهائي</title>
+    <title>KAREM STORE | PRO SYSTEM 2026</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
     <style>
-        :root { --main: #ff0000; --bg: #000; --card: #0f0f0f; --green: #00ff00; --gray: #1e1e1e; }
-        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; transition: 0.3s; }
+        :root { --main: #ff0000; --bg: #000; --card: #0d0d0d; --green: #00ff00; --gray: #1a1a1a; }
+        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; transition: 0.2s; }
         body { background: var(--bg); color: #fff; margin: 0; padding-bottom: 80px; }
 
         /* الهيدر */
         header { background: #000; padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--main); position: sticky; top: 0; z-index: 1000; }
-        .logo { font-weight: 900; font-size: 1.5rem; color: var(--main); text-shadow: 0 0 10px var(--main); }
+        .logo { font-weight: 900; font-size: 1.5rem; color: var(--main); text-shadow: 0 0 8px var(--main); }
 
-        /* كارت الوكيل */
+        /* بروفايل الوكيل */
         .u-card { background: var(--card); margin: 15px; padding: 15px; border-radius: 15px; display: flex; align-items: center; gap: 15px; border: 1px solid var(--gray); border-right: 5px solid var(--main); }
         .u-card img { width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--main); object-fit: cover; }
         .u-info h3 { margin: 0; font-size: 1rem; }
-        .u-info p { margin: 5px 0 0; color: var(--green); font-weight: bold; }
+        .u-info p { margin: 5px 0 0; color: var(--green); font-weight: bold; font-size: 1.1rem; }
 
-        /* الأقسام والشبكة */
-        .grid-cats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 15px; }
-        .cat-box { background: var(--card); border-radius: 15px; padding: 20px; text-align: center; border: 1px solid var(--gray); cursor: pointer; }
-        .cat-box:hover { border-color: var(--main); background: #1a0000; }
-        .cat-box i { font-size: 2.5rem; color: var(--main); margin-bottom: 10px; }
-
-        /* المنتجات */
-        .grid-prods { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 15px; }
-        .prod-box { background: var(--card); border-radius: 12px; padding: 8px; text-align: center; border: 1px solid var(--gray); }
-        .prod-box img { width: 100%; aspect-ratio: 1/1; border-radius: 10px; object-fit: cover; }
-        .prod-box h4 { font-size: 0.8rem; margin: 8px 0; height: 35px; overflow: hidden; }
-        .prod-box b { color: var(--green); display: block; margin-bottom: 5px; }
+        /* شبكة الأقسام والمنتجات */
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 15px; }
+        .prod-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 15px; }
+        .item-box { background: var(--card); border-radius: 15px; padding: 15px; text-align: center; border: 1px solid var(--gray); cursor: pointer; }
+        .item-box:hover { border-color: var(--main); background: #150000; }
+        .item-box img { width: 100%; aspect-ratio: 1/1; border-radius: 10px; object-fit: cover; }
+        .item-box h4 { font-size: 0.8rem; margin: 8px 0; height: 35px; overflow: hidden; }
 
         /* لوحة التحكم */
         .adm-panel { background: #050505; border: 2px solid var(--main); margin: 15px; padding: 15px; border-radius: 20px; }
-        .tabs { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 15px; }
-        .tab-btn { background: var(--gray); color: #fff; border: none; padding: 10px 15px; border-radius: 10px; cursor: pointer; white-space: nowrap; }
+        .tabs { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 15px; padding-bottom: 5px; }
+        .tab-btn { background: var(--gray); color: #fff; border: none; padding: 10px 15px; border-radius: 10px; cursor: pointer; white-space: nowrap; font-size: 0.8rem; }
         .tab-btn.active { background: var(--main); font-weight: bold; }
 
         input, select { width: 100%; padding: 12px; margin: 8px 0; background: #000; border: 1px solid #333; color: #fff; border-radius: 10px; }
         .btn { width: 100%; padding: 12px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; }
         .btn-main { background: var(--main); color: #fff; }
         .btn-green { background: var(--green); color: #000; }
-        .btn-del { background: #ff3333; color: #fff; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
+
+        /* قائمة الطلبات */
+        .order-card { background: #111; padding: 10px; border-radius: 10px; margin-bottom: 10px; border-left: 4px solid var(--green); font-size: 0.8rem; }
+        .order-card b { color: var(--main); }
 
         /* المودالات */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px; }
         .modal.active { display: flex; }
-        .modal-content { background: #0a0a0a; width: 100%; max-width: 400px; padding: 25px; border-radius: 25px; border: 1px solid #333; position: relative; }
-
-        .user-list-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #111; margin-bottom: 8px; border-radius: 10px; border-right: 3px solid var(--main); }
+        .modal-content { background: #0a0a0a; width: 100%; max-width: 400px; padding: 25px; border-radius: 25px; border: 1px solid #333; }
 
         .hidden { display: none !important; }
-        #backBtn { background: var(--gray); color: #fff; padding: 8px 15px; border-radius: 10px; margin: 10px 15px; display: inline-block; cursor: pointer; }
+        .back-btn { background: var(--gray); color: #fff; padding: 8px 15px; border-radius: 10px; margin: 15px; display: inline-block; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <header>
     <div class="logo">KAREM STORE</div>
-    <div id="uHeader" class="hidden"><img id="hImg" src="" style="width:35px; height:35px; border-radius:50%; border:1px solid var(--main)"></div>
-    <i class="fa-solid fa-lock" id="lockIcon" onclick="openAuth()"></i>
+    <div id="uHead" class="hidden"><img id="hImg" src="" style="width:35px; height:35px; border-radius:50%; border:1px solid var(--main)"></div>
+    <i class="fa-solid fa-user-lock" onclick="openAuth()"></i>
 </header>
 
 <div id="uArea" class="hidden">
@@ -71,8 +67,8 @@
         <img id="uImg" src="https://cdn-icons-png.flaticon.com/512/149/149071.png">
         <div class="u-info">
             <h3 id="un">--</h3>
-            <p>رصيدك: <span id="ub">0</span> ج</p>
-            <small id="ui"></small>
+            <p>المحفظة: <span id="ub">0</span> ج</p>
+            <small id="ui" style="color:#777"></small>
         </div>
     </div>
 </div>
@@ -80,76 +76,73 @@
 <div id="admArea" class="hidden">
     <div class="adm-panel">
         <div class="tabs">
-            <button class="tab-btn active" onclick="showTab('t1', this)">الأقسام</button>
-            <button class="tab-btn" onclick="showTab('t2', this)">المنتجات</button>
-            <button class="tab-btn" onclick="showTab('t3', this)">الأعضاء</button>
-            <button class="tab-btn" onclick="showTab('t4', this)">شحن</button>
+            <button class="tab-btn active" onclick="tab('t1', this)">الأقسام</button>
+            <button class="tab-btn" onclick="tab('t2', this)">المنتجات</button>
+            <button class="tab-btn" onclick="tab('t3', this)">الأعضاء</button>
+            <button class="tab-btn" onclick="tab('t4', this)">الطلبات الواردة 🔔</button>
+            <button class="tab-btn" onclick="tab('t5', this)">شحن</button>
         </div>
 
-        <div id="t1" class="t-content">
-            <input type="text" id="cn" placeholder="اسم القسم">
-            <input type="text" id="ci" placeholder="أيقونة (مثل fa-gamepad)">
-            <button class="btn btn-main" onclick="addCat()">إضافة قسم جديد</button>
+        <div id="t1" class="t-c">
+            <input type="text" id="cn" placeholder="اسم القسم الجديد">
+            <input type="text" id="ci" placeholder="أيقونة القسم (مثل fa-gamepad)">
+            <button class="btn btn-main" onclick="addCat()">حفظ القسم</button>
         </div>
 
-        <div id="t2" class="t-content hidden">
+        <div id="t2" class="t-c hidden">
             <select id="cpList"></select>
-            <input type="text" id="pn" placeholder="اسم المنتج">
-            <input type="number" id="pp" placeholder="سعر الوحدة الواحد">
+            <input type="text" id="pn" placeholder="اسم المنتج (مثلاً 1000 كوينز)">
+            <input type="number" id="pp" placeholder="السعر لكل وحدة">
             <input type="file" id="pf" accept="image/*">
-            <button class="btn btn-main" onclick="addProd()">نشر المنتج بالسعر المحدد</button>
+            <button class="btn btn-main" onclick="addProd()">نشر المنتج</button>
         </div>
 
-        <div id="t3" class="t-content hidden">
-            <div style="background:#111; padding:10px; border-radius:10px; margin-bottom:15px;">
-                <h4 style="margin:0 0 10px;">👤 إضافة أدمن</h4>
-                <input type="text" id="an" placeholder="الاسم">
-                <input type="email" id="ae" placeholder="الإيميل">
-                <input type="password" id="ap" placeholder="الباسورد">
-                <button class="btn btn-green" onclick="createAdmin()">حفظ كأدمن</button>
-            </div>
-            <h4>إدارة المسجلين (حذف):</h4>
-            <div id="usersBox" style="max-height: 200px; overflow-y: auto;"></div>
+        <div id="t3" class="t-c hidden">
+            <div id="usersList"></div>
         </div>
 
-        <div id="t4" class="t-content hidden">
-            <input type="number" id="sid" placeholder="ID الوكيل">
+        <div id="t4" class="t-c hidden">
+            <div id="ordersList">لا يوجد طلبات حالياً</div>
+        </div>
+
+        <div id="t5" class="t-c hidden">
+            <input type="number" id="sid" placeholder="ادخل ID الوكيل">
             <button class="btn btn-green" onclick="findU()">بحث</button>
             <div id="rBox" class="hidden">
                 <p id="rt"></p>
                 <input type="number" id="ra" placeholder="المبلغ">
-                <button class="btn btn-green" onclick="doCharge()">تأكيد الشحن</button>
+                <button class="btn btn-green" onclick="charge()">شحن رصيد</button>
             </div>
         </div>
     </div>
 </div>
 
-<div id="catsView"><div class="grid-cats" id="catsBox"></div></div>
+<div id="catsView"><div class="grid" id="catsBox"></div></div>
 <div id="prodsView" class="hidden">
-    <div id="backBtn" onclick="goBack()"><i class="fa-solid fa-arrow-right"></i> رجوع</div>
-    <h3 id="ct" style="padding:0 20px; color:var(--main)"></h3>
-    <div class="grid-prods" id="prodsBox"></div>
+    <div class="back-btn" onclick="goBack()"><i class="fa-solid fa-arrow-right"></i> رجوع</div>
+    <h3 id="catTitle" style="padding:0 20px; color:var(--main)"></h3>
+    <div class="prod-grid" id="prodsBox"></div>
 </div>
 
 <div id="buyModal" class="modal">
     <div class="modal-content">
         <h3 id="mt"></h3>
         <p>سعر الوحدة: <b id="mp"></b> ج</p>
-        <label>الكمية المطلوبة:</label>
-        <input type="number" id="mq" value="1" min="1" oninput="calc()">
+        <label>حدد الكمية (تلقائي):</label>
+        <input type="number" id="mq" value="1" min="1" oninput="recalc()">
         <h2 style="color:var(--green)">الإجمالي: <span id="mtot">0</span> ج</h2>
-        <div id="mAct"></div>
+        <div id="bAct"></div>
         <button class="btn" onclick="closeM('buyModal')" style="margin-top:10px; background:#222; color:#fff;">إلغاء</button>
     </div>
 </div>
 
 <div id="authModal" class="modal">
     <div class="modal-content">
-        <h3>دخول المنصة</h3>
-        <input type="text" id="rn" placeholder="الاسم (للمسجلين الجدد)">
+        <h3>تسجيل الدخول</h3>
+        <input type="text" id="rn" placeholder="الاسم (للتسجيل الجديد)">
         <input type="email" id="re" placeholder="الإيميل">
         <input type="password" id="rp" placeholder="الباسورد">
-        <button class="btn btn-main" onclick="auth()">دخول / تسجيل</button>
+        <button class="btn btn-main" onclick="auth()">دخول</button>
     </div>
 </div>
 
@@ -170,11 +163,10 @@
 
     function closeM(id) { document.getElementById(id).classList.remove('active'); }
     function openAuth() { document.getElementById('authModal').classList.add('active'); }
-    function showTab(id, btn) {
-        document.querySelectorAll('.t-content').forEach(c=>c.classList.add('hidden'));
-        document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-        document.getElementById(id).classList.remove('hidden');
-        btn.classList.add('active');
+    function tab(id, b) {
+        document.querySelectorAll('.t-c').forEach(c=>c.classList.add('hidden'));
+        document.querySelectorAll('.tab-btn').forEach(btn=>btn.classList.remove('active'));
+        document.getElementById(id).classList.remove('hidden'); b.classList.add('active');
     }
     function goBack() { document.getElementById('catsView').classList.remove('hidden'); document.getElementById('prodsView').classList.add('hidden'); }
 
@@ -185,13 +177,13 @@
         const n = document.getElementById('rn').value;
 
         if(e === 'admin@karem_com' && p === '123456') {
-            login({ name: 'كريم (المدير)', email: e, uid: '1001', role: 'admin', balance: 99999 }); return;
+            login({ name: 'كريم (المدير)', email: e, uid: 'MASTER', role: 'admin', balance: 999999 }); return;
         }
 
         db.ref('users/'+e).once('value', s => {
             if(s.exists()) {
                 if(s.val().pass === p) login(s.val());
-                else alert("خطأ في الباسورد");
+                else alert("الباسورد خطأ");
             } else {
                 db.ref('lastID').transaction(c => {
                     const id = (c || 1000) + 1;
@@ -206,65 +198,36 @@
 
     function login(d) {
         user = d; closeM('authModal');
-        document.getElementById('uHeader').classList.remove('hidden');
         document.getElementById('uArea').classList.remove('hidden');
+        document.getElementById('uHead').classList.remove('hidden');
         document.getElementById('un').innerText = d.name;
         document.getElementById('ui').innerText = "ID: " + d.uid;
-        document.getElementById('lockIcon').className = "fa-solid fa-right-from-bracket";
-        document.getElementById('lockIcon').onclick = () => location.reload();
-        
         db.ref('users/'+d.email+'/balance').on('value', s => {
             user.balance = s.val() || 0;
             document.getElementById('ub').innerText = user.balance;
         });
-
         if(d.role === 'admin') {
             document.getElementById('admArea').classList.remove('hidden');
-            loadAllUsers();
+            loadOrders();
+            loadUsers();
         }
         loadCats();
     }
 
-    function createAdmin() {
-        const e = document.getElementById('ae').value.replace(/\./g, '_').toLowerCase();
-        const p = document.getElementById('ap').value;
-        const n = document.getElementById('an').value;
-        db.ref('users/'+e).set({ name: n, email: e, pass: p, balance: 0, role: 'admin', uid: 'ADM' });
-        alert("تم إنشاء الأدمن");
-    }
-
-    function loadAllUsers() {
-        db.ref('users').on('value', s => {
-            const box = document.getElementById('usersBox'); box.innerHTML = "";
-            s.forEach(u => {
-                const ud = u.val();
-                box.innerHTML += `<div class="user-list-item">
-                    <span>${ud.name} (${ud.role})</span>
-                    <button class="btn-del" onclick="delUser('${ud.email}')">حذف</button>
-                </div>`;
-            });
-        });
-    }
-    function delUser(em) { if(confirm("هل أنت متأكد من حذف هذا الحساب؟")) db.ref('users/'+em).remove(); }
-
-    // --- الأقسام والمنتجات ---
+    // --- إدارة الأقسام والمنتجات ---
     function addCat() {
         const n = document.getElementById('cn').value;
         const i = document.getElementById('ci').value || 'fa-box';
-        db.ref('categories').push({ name: n, icon: i });
-        alert("تم إضافة القسم");
+        db.ref('categories').push({ name: n, icon: i }); alert("تم الحفظ");
     }
 
     function loadCats() {
         db.ref('categories').on('value', s => {
             const box = document.getElementById('catsBox'); box.innerHTML = "";
-            const list = document.getElementById('cpList'); list.innerHTML = "";
+            const sel = document.getElementById('cpList'); sel.innerHTML = "";
             s.forEach(c => {
-                const cd = c.val();
-                box.innerHTML += `<div class="cat-box" onclick="openCat('${c.key}', '${cd.name}')">
-                    <i class="fa-solid ${cd.icon}"></i><h3>${cd.name}</h3>
-                </div>`;
-                list.innerHTML += `<option value="${c.key}">${cd.name}</option>`;
+                box.innerHTML += `<div class="item-box" onclick="openCat('${c.key}', '${c.val().name}')"><i class="fa-solid ${c.val().icon}" style="font-size:2rem; color:red;"></i><h3>${c.val().name}</h3></div>`;
+                sel.innerHTML += `<option value="${c.key}">${c.val().name}</option>`;
             });
         });
     }
@@ -276,52 +239,89 @@
         const f = document.getElementById('pf').files[0];
         const r = new FileReader();
         r.onload = e => db.ref('products/'+c).push({ n, p: Number(p), img: e.target.result });
-        r.readAsDataURL(f); alert("تم نشر المنتج بنجاح!");
+        r.readAsDataURL(f); alert("تم النشر");
     }
 
     function openCat(id, name) {
         document.getElementById('catsView').classList.add('hidden');
         document.getElementById('prodsView').classList.remove('hidden');
-        document.getElementById('ct').innerText = name;
+        document.getElementById('catTitle').innerText = name;
         db.ref('products/'+id).on('value', s => {
             const box = document.getElementById('prodsBox'); box.innerHTML = "";
             s.forEach(p => {
                 const pd = p.val();
-                box.innerHTML += `<div class="prod-box" onclick='openBuy(${JSON.stringify(pd)})'>
-                    <img src="${pd.img}"><h4>${pd.n}</h4><b>${pd.p} ج</b>
-                </div>`;
+                box.innerHTML += `<div class="item-box" onclick='openBuy(${JSON.stringify(pd)})'><img src="${pd.img}"><h4>${pd.n}</h4><b>${pd.p} ج</b></div>`;
             });
         });
     }
 
+    // --- الشحن والحساب التلقائي ---
     function openBuy(p) {
         if(!user) return openAuth();
         selP = p; document.getElementById('buyModal').classList.add('active');
         document.getElementById('mt').innerText = p.n;
         document.getElementById('mp').innerText = p.p;
-        document.getElementById('mq').value = 1; calc();
+        document.getElementById('mq').value = 1; recalc();
     }
 
-    function calc() {
+    function recalc() {
         const q = document.getElementById('mq').value;
-        const tot = q * selP.p;
+        const tot = q * selP.p; // الحساب التلقائي هنا
         document.getElementById('mtot').innerText = tot;
-        const btn = document.getElementById('mAct');
-        if(user.balance >= tot) btn.innerHTML = `<button class="btn btn-green" onclick="doBuy(${tot}, ${q})">تأكيد الشراء الآن ✅</button>`;
-        else btn.innerHTML = `<button class="btn" style="background:#444" disabled>رصيدك غير كافي للشراء ⚠️</button>`;
+        const btn = document.getElementById('bAct');
+        if(user.balance >= tot) btn.innerHTML = `<button class="btn btn-green" onclick="doBuy(${tot},${q})">تأكيد الشراء ✅</button>`;
+        else btn.innerHTML = `<button class="btn" style="background:#333" disabled>رصيدك غير كافي</button>`;
     }
 
     function doBuy(t, q) {
         db.ref('users/'+user.email).update({ balance: user.balance - t });
-        db.ref('orders').push({ user: user.name, id: user.uid, product: selP.n, qty: q, total: t });
-        alert("تم إرسال طلبك!"); closeM('buyModal');
+        // إرسال الطلب لقاعدة البيانات ليراه المدير
+        db.ref('orders').push({
+            uName: user.name,
+            uID: user.uid,
+            pName: selP.n,
+            qty: q,
+            total: t,
+            date: new Date().toLocaleString()
+        });
+        alert("تم الطلب! رصيدك الجديد: " + (user.balance - t));
+        closeM('buyModal');
     }
 
-    // --- الشحن ---
+    // --- لوحة المدير: الطلبات والأعضاء ---
+    function loadOrders() {
+        db.ref('orders').on('value', s => {
+            const list = document.getElementById('ordersList');
+            list.innerHTML = "";
+            if(!s.exists()) list.innerText = "لا توجد طلبات";
+            s.forEach(o => {
+                const d = o.val();
+                list.innerHTML = `<div class="order-card">
+                    <b>طلب من:</b> ${d.uName} (ID: ${d.uID})<br>
+                    <b>المنتج:</b> ${d.pName} | <b>الكمية:</b> ${d.qty}<br>
+                    <b>الإجمالي:</b> ${d.total} ج | <b>الوقت:</b> ${d.date}
+                </div>` + list.innerHTML;
+            });
+        });
+    }
+
+    function loadUsers() {
+        db.ref('users').on('value', s => {
+            const box = document.getElementById('usersList'); box.innerHTML = "";
+            s.forEach(u => {
+                box.innerHTML += `<div class="order-card" style="border-left-color:red; display:flex; justify-content:space-between;">
+                    <span>${u.val().name} (${u.val().role})</span>
+                    <button onclick="delU('${u.key}')" style="background:red; color:#fff; border:none; border-radius:5px;">حذف</button>
+                </div>`;
+            });
+        });
+    }
+    function delU(key) { if(confirm("حذف؟")) db.ref('users/'+key).remove(); }
+
     function findU() {
         const id = document.getElementById('sid').value;
         db.ref('idMap/'+id).once('value', s => {
-            if(!s.exists()) return alert("ID غير موجود");
+            if(!s.exists()) return alert("خطأ");
             tMail = s.val();
             db.ref('users/'+tMail).once('value', u => {
                 document.getElementById('rBox').classList.remove('hidden');
@@ -329,11 +329,11 @@
             });
         });
     }
-    function doCharge() {
+    function charge() {
         const a = Number(document.getElementById('ra').value);
         db.ref('users/'+tMail).once('value', s => {
             db.ref('users/'+tMail).update({ balance: (s.val().balance||0)+a });
-            alert("تم الشحن بنجاح!");
+            alert("تم الشحن");
         });
     }
 
