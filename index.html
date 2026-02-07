@@ -3,143 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HELMY CARD | Official Store</title>
+    <title>HELMY STORE | المنصة الاحترافية</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
     <style>
-        :root { --main: #8a2be2; --bg: #000; --card: #111; --accent: #1a1a1a; }
+        :root { --main: #8a2be2; --bg: #000; --card: #111; --text: #fff; }
         * { box-sizing: border-box; font-family: 'Cairo', sans-serif; transition: 0.3s; }
-        body { background: var(--bg); color: #fff; margin: 0; padding-bottom: 20px; }
+        body { background: var(--bg); color: var(--text); margin: 0; padding-bottom: 60px; overflow-x: hidden; }
 
-        /* الهيدر والقائمة الجانبية */
+        /* Navbar & Sidebar */
         header { padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222; background: #000; position: sticky; top: 0; z-index: 1000; }
-        .sidebar { position: fixed; right: -100%; top: 0; width: 280px; height: 100%; background: #0a0a0a; z-index: 2001; padding: 20px; border-left: 1px solid var(--main); }
+        .sidebar { position: fixed; right: -280px; top: 0; width: 280px; height: 100%; background: #0a0a0a; z-index: 2001; padding: 20px; border-left: 1px solid var(--main); box-shadow: -5px 0 15px #000; }
         .sidebar.active { right: 0; }
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; z-index: 2000; }
         .overlay.active { display: block; }
 
-        /* المتجر */
-        .container { padding: 15px; }
-        .cat-section { margin-bottom: 30px; }
-        .cat-header { font-size: 1.2rem; color: var(--main); border-right: 4px solid var(--main); padding-right: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; }
-        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-        .card { background: var(--card); border-radius: 15px; padding: 10px; text-align: center; border: 1px solid #222; cursor: pointer; }
+        /* Store UI */
+        .container { padding: 15px; max-width: 1200px; margin: auto; }
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .card { background: var(--card); border-radius: 15px; padding: 12px; text-align: center; border: 1px solid #222; cursor: pointer; }
+        .card:hover { border-color: var(--main); transform: translateY(-5px); }
         .card img { width: 100%; aspect-ratio: 1/1; border-radius: 12px; object-fit: cover; }
-        .card h4 { margin: 10px 0 5px; font-size: 0.9rem; }
-        .card b { color: var(--main); }
+        .card b { color: var(--main); display: block; margin-top: 10px; font-size: 1.1rem; }
 
-        /* مودال الشراء والشحن */
+        /* Modals & Full Pages */
         .full-page { position: fixed; inset: 0; background: #000; z-index: 3000; display: none; flex-direction: column; padding: 20px; overflow-y: auto; }
         .full-page.active { display: flex; }
-        .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
-        .input-box { background: var(--accent); padding: 15px; border-radius: 20px; border: 1px solid #333; text-align: center; }
-        .input-box label { display: block; color: #666; font-size: 0.8rem; margin-bottom: 5px; }
-        .input-box input { background: transparent; border: none; color: #fff; width: 100%; text-align: center; font-size: 1.2rem; outline: none; font-weight: bold; }
+        .box { background: #151515; padding: 20px; border-radius: 20px; border: 1px solid #333; margin-bottom: 15px; }
+        .box label { color: #888; font-size: 0.85rem; display: block; margin-bottom: 8px; }
+        input { background: #000; border: 1px solid #333; color: #fff; width: 100%; padding: 12px; border-radius: 10px; outline: none; font-size: 1rem; }
+        input:focus { border-color: var(--main); }
 
-        /* لوحة التحكم */
-        .admin-card { background: #0a0a0a; border: 1px solid var(--main); padding: 15px; border-radius: 15px; margin-bottom: 15px; }
-        .req-item { background: #1a1a1a; padding: 10px; border-radius: 10px; margin-bottom: 10px; border-right: 4px solid var(--main); }
+        /* Buttons */
+        .btn-buy { background: var(--main); color: #fff; border: none; padding: 15px; border-radius: 30px; width: 100%; font-weight: bold; cursor: pointer; font-size: 1.1rem; box-shadow: 0 4px 15px rgba(138, 43, 226, 0.3); }
+        .btn-back { background: transparent; border: 1px solid #444; color: #fff; padding: 12px; border-radius: 30px; width: 100%; margin-top: 10px; }
 
-        .btn-main { background: var(--main); color: #fff; border: none; padding: 15px; border-radius: 30px; width: 100%; font-weight: bold; cursor: pointer; font-size: 1rem; }
-        .btn-sec { background: transparent; border: 1px solid #444; color: #fff; padding: 15px; border-radius: 30px; width: 100%; margin-top: 10px; cursor: pointer; }
+        /* Admin UI */
+        .admin-item { background: #111; border-right: 4px solid var(--main); padding: 15px; border-radius: 10px; margin-bottom: 15px; }
+        .status-badge { padding: 2px 8px; border-radius: 5px; font-size: 0.8rem; }
+        .pending { background: #ffaa00; color: #000; }
+
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
 <header>
-    <div style="font-size: 1.3rem; font-weight: bold; color: var(--main);">HELMY CARD</div>
-    <div id="user-header" class="hidden">
-        <span id="header-bal" style="color:var(--main); margin-left:10px; font-weight:bold;">0 ج</span>
-        <i class="fa-solid fa-bars" onclick="toggleMenu()" style="font-size: 1.4rem; cursor:pointer;"></i>
+    <div style="font-size: 1.4rem; font-weight: 900; color: var(--main);">HELMY STORE</div>
+    <div id="user-nav" class="hidden" style="display:flex; align-items:center; gap:12px;">
+        <div style="text-align: left;"><small style="color:#777; display:block; font-size:0.7rem;">رصيدك</small><span id="uBal" style="font-weight:bold;">0.00 ج</span></div>
+        <i class="fa-solid fa-bars-staggered" onclick="toggleMenu()" style="font-size: 1.5rem; cursor:pointer; color:var(--main);"></i>
     </div>
-    <button id="login-btn" onclick="openFull('login-page')" style="background:var(--main); border:none; color:#fff; padding:8px 15px; border-radius:8px;">دخول</button>
+    <button id="login-trigger" onclick="openPage('login-page')" style="background:var(--main); color:#fff; border:none; padding:8px 18px; border-radius:10px; font-weight:bold;">دخول</button>
 </header>
 
 <div class="overlay" onclick="toggleMenu()"></div>
 <div class="sidebar" id="sidebar">
-    <h3 id="side-name">القائمة</h3>
-    <hr style="border:0; border-top:1px solid #222;">
+    <h3 id="side-username" style="color:var(--main);">--</h3>
+    <hr style="border:0; border-top:1px solid #222; margin: 20px 0;">
     <p onclick="location.reload()"><i class="fa-solid fa-house"></i> الرئيسية</p>
-    <p onclick="openFull('charge-page')"><i class="fa-solid fa-wallet"></i> شحن الرصيد</p>
-    <p id="adm-link" class="hidden" onclick="openAdmin()"><i class="fa-solid fa-user-shield"></i> لوحة التحكم</p>
-    <p onclick="location.reload()" style="color:red; margin-top:50px;"><i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج</p>
+    <p onclick="openPage('charge-page')"><i class="fa-solid fa-wallet"></i> شحن المحفظة</p>
+    <p id="adm-btn" class="hidden" onclick="openPage('admin-page')" style="color:var(--main); font-weight:bold;"><i class="fa-solid fa-user-shield"></i> لوحة التحكم</p>
+    <p onclick="location.reload()" style="color:#ff4444; margin-top:50px;"><i class="fa-solid fa-power-off"></i> تسجيل الخروج</p>
 </div>
 
-<div class="container" id="store-content">
-    <p style="text-align:center; padding:50px;">جاري تحميل العروض...</p>
+<div class="container" id="store-front">
+    <div id="products-grid" class="grid">جاري تحميل المنتجات...</div>
 </div>
 
 <div id="buy-page" class="full-page">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-        <span class="btn-main" style="width:auto; padding:5px 15px;" id="m-price">0 ج</span>
-        <b id="m-name" style="font-size:1.1rem;">اسم المنتج</b>
+    <div style="text-align:center; margin-bottom:20px;">
+        <img id="m-img" src="" style="width:120px; height:120px; border-radius:20px; border:2px solid var(--main);">
+        <h2 id="m-title">--</h2>
     </div>
-    <div class="calc-grid">
-        <div class="input-box">
-            <label>الكمية المطلوب شرائها</label>
-            <input type="number" id="buy-qty" value="1000" oninput="calc()">
-        </div>
-        <div class="input-box">
-            <label>الإجمالي (جنيه مصري)</label>
-            <div id="buy-total" style="font-size:1.3rem; font-weight:bold; padding:5px;">0</div>
+    <div class="box">
+        <div style="display:flex; gap:10px;">
+            <div style="flex:1;"><label>الكمية المطلوب</label><input type="number" id="buy-qty" value="1000" oninput="calc()"></div>
+            <div style="flex:1;"><label>السعر الإجمالي</label><div id="buy-total" style="font-size:1.5rem; font-weight:bold; padding-top:8px;">0</div></div>
         </div>
     </div>
-    <div class="input-box" style="margin-bottom:20px;">
-        <label>ID الحساب (اللاعب)</label>
-        <input type="text" id="player-id" placeholder="اكتب الـ ID هنا">
+    <div class="box">
+        <label>إدخال الـ ID الخاص باللاعب</label>
+        <input type="text" id="player-id" placeholder="اكتب الـ ID هنا بدقة">
     </div>
-    <button class="btn-main" onclick="confirmOrder()">تأكيد عملية الشراء</button>
-    <button class="btn-sec" onclick="closeFull()">إلغاء</button>
+    <button class="btn-buy" onclick="submitOrder()">تأكيد الشراء والخصم</button>
+    <button class="btn-back" onclick="closePages()">إلغاء</button>
 </div>
 
 <div id="charge-page" class="full-page">
-    <h2 style="text-align:center; color:var(--main);">شحن محفظة الوكيل</h2>
-    <div class="input-box" style="margin-bottom:15px;">
-        <label>المبلغ الذي قمت بتحويله</label>
-        <input type="number" id="c-amount" placeholder="0.00">
+    <h2 style="color:var(--main); text-align:center;">شحن المحفظة 💰</h2>
+    <div class="box" style="background:#8a2be21a; border-color:var(--main);">
+        <p style="margin:0; font-size:0.9rem;">حول المبلغ على فودافون كاش: <br><b style="font-size:1.2rem;">010XXXXXXXX</b></p>
     </div>
-    <div class="input-box" style="margin-bottom:15px;">
-        <label>صورة التحويل (Screenshot)</label>
+    <div class="box">
+        <label>المبلغ المحول</label>
+        <input type="number" id="c-amt" placeholder="0.00">
+    </div>
+    <div class="box">
+        <label>ارفع صورة التحويل (سكرين شوت)</label>
         <input type="file" id="c-file" accept="image/*">
     </div>
-    <button class="btn-main" onclick="sendCharge()">إرسال لإضافة الرصيد</button>
-    <button class="btn-sec" onclick="closeFull()">إلغاء</button>
+    <button class="btn-buy" onclick="submitCharge()">إرسال الطلب للمراجعة</button>
+    <button class="btn-back" onclick="closePages()">رجوع</button>
 </div>
 
 <div id="admin-page" class="full-page">
-    <h2 style="color:var(--main)">لوحة الإدارة ⚙️</h2>
-    <div class="admin-card">
-        <h4>إضافة منتج جديد</h4>
-        <input type="text" id="adm-n" placeholder="الاسم" style="width:100%; padding:10px; margin-bottom:5px; background:#000; color:#fff; border:1px solid #333;">
-        <input type="number" id="adm-p" placeholder="السعر لكل 1000" style="width:100%; padding:10px; margin-bottom:5px; background:#000; color:#fff; border:1px solid #333;">
+    <h2 style="color:var(--main)">لوحة التحكم 🛠️</h2>
+    <div class="box">
+        <h4>إضافة خدمة جديدة</h4>
+        <input type="text" id="adm-n" placeholder="الاسم" style="margin-bottom:10px;">
+        <input type="number" id="adm-p" placeholder="السعر لكل 1000" style="margin-bottom:10px;">
         <input type="file" id="adm-i">
-        <button class="btn-main" onclick="addProd()" style="margin-top:10px;">نشر الآن</button>
+        <button class="btn-buy" onclick="addNewProduct()" style="margin-top:10px;">نشر الخدمة</button>
     </div>
-    <div class="admin-card">
-        <h4>طلبات الشحن (الصور)</h4>
-        <div id="adm-charges"></div>
-    </div>
-    <div class="admin-card">
-        <h4>طلبات الشراء</h4>
-        <div id="adm-orders"></div>
-    </div>
-    <button class="btn-sec" onclick="closeFull()">العودة للمتجر</button>
+    <h3>طلبات شحن الأرصدة 💰</h3>
+    <div id="adm-charge-list"></div>
+    <h3>طلبات الشراء 🛒</h3>
+    <div id="adm-buy-list"></div>
+    <button class="btn-back" onclick="closePages()">خروج</button>
 </div>
 
 <div id="login-page" class="full-page" style="justify-content:center; align-items:center;">
-    <div style="width:100%; max-width:350px;">
-        <h2 style="text-align:center; color:var(--main)">دخول الوكلاء</h2>
-        <input type="email" id="l-email" placeholder="البريد الإلكتروني" style="width:100%; padding:15px; margin-bottom:10px; background:#111; border:1px solid #333; color:#fff; border-radius:15px;">
-        <input type="password" id="l-pass" placeholder="كلمة المرور" style="width:100%; padding:15px; margin-bottom:15px; background:#111; border:1px solid #333; color:#fff; border-radius:15px;">
-        <button class="btn-main" onclick="login()">دخول للمنصة</button>
-        <button class="btn-sec" onclick="closeFull()">إغلاق</button>
+    <div style="width:100%; max-width:400px; text-align:center;">
+        <h2 style="color:var(--main)">دخول الوكلاء</h2>
+        <input type="email" id="l-email" placeholder="البريد الإلكتروني" style="margin-bottom:10px;">
+        <input type="password" id="l-pass" placeholder="كلمة المرور" style="margin-bottom:20px;">
+        <button class="btn-buy" onclick="handleAuth()">دخول / إنشاء حساب</button>
+        <button class="btn-back" onclick="closePages()">إغلاق</button>
     </div>
 </div>
 
 <script>
-    // Firebase Config
+    // إعدادات Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyAalmOWMUhvCi_PuFSUbXRpbe1hmGyer7s",
         authDomain: "karem-store.firebaseapp.com",
@@ -155,106 +151,106 @@
     let user = null; let selP = null;
 
     function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.querySelector('.overlay').classList.toggle('active'); }
-    function openFull(id) { closeFull(); document.getElementById(id).classList.add('active'); if(id==='sidebar') toggleMenu(); }
-    function closeFull() { document.querySelectorAll('.full-page').forEach(p => p.classList.remove('active')); }
-    function openAdmin() { toggleMenu(); openFull('admin-page'); }
+    function openPage(id) { closePages(); if(id==='sidebar') toggleMenu(); else document.getElementById(id).classList.add('active'); }
+    function closePages() { document.querySelectorAll('.full-page').forEach(p => p.classList.remove('active')); }
 
     // --- نظام الدخول ---
-    function login() {
+    function handleAuth() {
         const e = document.getElementById('l-email').value.replace(/\./g, '_').toLowerCase();
         const p = document.getElementById('l-pass').value;
-        if(e === 'admin@helmy_com' && p === '123123') { setup({ name: 'كرم (المدير)', email: e, role: 'admin', balance: 999999 }); return; }
+        if(e === 'admin@helmy_com' && p === '123123') { setup({ name: 'حلمي (المدير)', email: e, role: 'admin', balance: 999999 }); return; }
         db.ref('users/'+e).once('value', s => {
             if(s.exists() && s.val().pass === p) setup(s.val());
             else if(!s.exists()) {
                 const u = { name: 'وكيل جديد', email: e, pass: p, role: 'user', balance: 0 };
                 db.ref('users/'+e).set(u); setup(u);
-            } else alert("بيانات غير صحيحة");
+            } else alert("خطأ في البيانات");
         });
     }
 
     function setup(d) {
-        user = d; closeFull();
-        document.getElementById('login-btn').classList.add('hidden');
-        document.getElementById('user-header').classList.remove('hidden');
-        document.getElementById('side-name').innerText = d.name;
+        user = d; closePages();
+        document.getElementById('login-trigger').classList.add('hidden');
+        document.getElementById('user-nav').classList.remove('hidden');
+        document.getElementById('side-username').innerText = d.name;
         db.ref('users/'+d.email+'/balance').on('value', s => {
             user.balance = s.val() || 0;
-            document.getElementById('header-bal').innerText = user.balance + " ج";
+            document.getElementById('uBal').innerText = user.balance.toFixed(2) + " ج";
         });
-        if(d.role === 'admin') { document.getElementById('adm-link').classList.remove('hidden'); listenAdmin(); }
+        if(d.role === 'admin') { document.getElementById('adm-btn').classList.remove('hidden'); listenAdmin(); }
     }
 
-    // --- المتجر (الزائر) ---
-    function loadStore() {
+    // --- المتجر ---
+    function loadProducts() {
         db.ref('products').on('value', s => {
-            const store = document.getElementById('store-content'); store.innerHTML = "<div class='cat-section'><div class='cat-header'>جميع المنتجات المتاحة</div><div class='grid' id='g-box'></div></div>";
-            const gBox = document.getElementById('g-box');
+            const grid = document.getElementById('products-grid'); grid.innerHTML = "";
             s.forEach(p => {
                 const d = p.val();
-                gBox.innerHTML += `<div class="card" onclick='openBuy(${JSON.stringify(d)})'>
-                    <img src="${d.img}"><h4>${d.name}</h4><b>${d.price} ج</b>
+                grid.innerHTML += `<div class="card" onclick='openBuy(${JSON.stringify(d)})'>
+                    <img src="${d.img}"><h4>${d.n}</h4><b>${d.p} ج</b>
                 </div>`;
             });
         });
     }
 
     function openBuy(p) {
-        if(!user) return openFull('login-page');
-        selP = p;
-        openFull('buy-page');
-        document.getElementById('m-name').innerText = p.name;
-        document.getElementById('m-price').innerText = p.price + " ج";
+        if(!user) return openPage('login-page');
+        selP = p; openPage('buy-page');
+        document.getElementById('m-title').innerText = p.n;
+        document.getElementById('m-img').src = p.img;
         calc();
     }
 
     function calc() {
         const q = document.getElementById('buy-qty').value;
-        const total = (q / 1000) * selP.price;
-        document.getElementById('buy-total').innerText = total.toFixed(2);
+        document.getElementById('buy-total').innerText = ((q / 1000) * selP.p).toFixed(2) + " ج";
     }
 
-    function confirmOrder() {
-        const total = Number(document.getElementById('buy-total').innerText);
-        if(user.balance < total) return alert("رصيدك لا يكفي");
+    function submitOrder() {
+        const total = parseFloat(document.getElementById('buy-total').innerText);
+        const pid = document.getElementById('player-id').value;
+        if(!pid) return alert("اكتب الـ ID");
+        if(user.balance < total) return alert("رصيدك غير كافي، اشحن محفظتك أولاً");
+
+        // خصم فوري
         db.ref('users/'+user.email).update({ balance: (user.balance - total).toFixed(2) });
-        db.ref('reqs/buy').push({ uName: user.name, uMail: user.email, prod: selP.name, qty: document.getElementById('buy-qty').value, playerID: document.getElementById('player-id').value, total, status: 'pending' });
-        alert("تم إرسال الطلب للمدير للتنفيذ"); closeFull();
+        // إرسال طلب
+        db.ref('orders/buy').push({ uName: user.name, uMail: user.email, prod: selP.n, qty: document.getElementById('buy-qty').value, pid, total, status: 'pending' });
+        alert("تم الخصم بنجاح وطلبك قيد التنفيذ"); closePages();
     }
 
-    // --- شحن الرصيد ---
-    function sendCharge() {
-        const amt = document.getElementById('c-amount').value;
+    // --- الشحن ---
+    function submitCharge() {
+        const amt = document.getElementById('c-amt').value;
         const file = document.getElementById('c-file').files[0];
-        if(!amt || !file) return alert("اكمل البيانات");
+        if(!amt || !file) return alert("اكمل البيانات وارفع الصورة");
         const r = new FileReader();
         r.onload = e => {
-            db.ref('reqs/charge').push({ uName: user.name, uMail: user.email, amount: amt, img: e.target.result, status: 'pending' });
-            alert("تم إرسال صورة التحويل، انتظر مراجعة المدير"); closeFull();
+            db.ref('orders/charge').push({ uName: user.name, uMail: user.email, amount: amt, img: e.target.result, status: 'pending' });
+            alert("تم إرسال سكرين الشحن، انتظر تفعيل الرصيد من حلمي"); closePages();
         };
         r.readAsDataURL(file);
     }
 
-    // --- لوحة التحكم ---
+    // --- لوحة التحكم (للمدير) ---
     function listenAdmin() {
-        db.ref('reqs/charge').on('value', s => {
-            const box = document.getElementById('adm-charges'); box.innerHTML = "";
+        db.ref('orders/charge').on('value', s => {
+            const box = document.getElementById('adm-charge-list'); box.innerHTML = "";
             s.forEach(r => { if(r.val().status === 'pending') {
-                box.innerHTML += `<div class="req-item">
+                box.innerHTML += `<div class="admin-item">
                     <b>${r.val().uName} (${r.val().amount} ج)</b><br>
-                    <img src="${r.val().img}" style="width:100%; max-height:200px; margin:10px 0; border-radius:10px;"><br>
-                    <button class="btn-main" onclick="approveCharge('${r.key}','${r.val().uMail}',${r.val().amount})" style="background:green;">قبول وإضافة رصيد ✅</button>
+                    <img src="${r.val().img}" style="width:100%; max-height:150px; margin:10px 0; border-radius:5px;"><br>
+                    <button onclick="approveCharge('${r.key}','${r.val().uMail}',${r.val().amount})" style="background:green;color:#fff;border:none;padding:8px;border-radius:5px;">قبول الرصيد ✅</button>
                 </div>`;
             }});
         });
-        db.ref('reqs/buy').on('value', s => {
-            const box = document.getElementById('adm-orders'); box.innerHTML = "";
+        db.ref('orders/buy').on('value', s => {
+            const box = document.getElementById('adm-buy-list'); box.innerHTML = "";
             s.forEach(r => { if(r.val().status === 'pending') {
-                box.innerHTML += `<div class="req-item">
-                    <b>${r.val().prod} (${r.val().qty})</b><br>ID اللاعب: ${r.val().playerID}<br>
-                    الوكيل: ${r.val().uName}<br>
-                    <button class="btn-main" onclick="doneOrder('${r.key}')" style="background:green;">تم التنفيذ ✅</button>
-                    <button class="btn-sec" onclick="cancelOrder('${r.key}','${r.val().uMail}',${r.val().total})" style="color:red; border-color:red;">رفض وارجاع مال ❌</button>
+                box.innerHTML += `<div class="admin-item">
+                    <b>${r.val().prod} (${r.val().qty})</b><br>اللاعب: ${r.val().pid} | السعر: ${r.val().total}ج<br>
+                    <button onclick="doneOrder('${r.key}')" style="background:green;color:#fff;border:none;padding:5px;border-radius:5px;">تم الشحن ✅</button>
+                    <button onclick="rejectOrder('${r.key}','${r.val().uMail}',${r.val().total})" style="background:red;color:#fff;border:none;padding:5px;border-radius:5px;">رفض وإرجاع فلوسه ❌</button>
                 </div>`;
             }});
         });
@@ -262,24 +258,24 @@
 
     function approveCharge(k, m, a) {
         db.ref('users/'+m).once('value', s => {
-            db.ref('users/'+m).update({ balance: (Number(s.val().balance) + Number(a)).toFixed(2) });
-            db.ref('reqs/charge/'+k).update({ status: 'done' });
+            db.ref('users/'+m).update({ balance: (parseFloat(s.val().balance) + parseFloat(a)).toFixed(2) });
+            db.ref('orders/charge/'+k).update({ status: 'done' });
         });
     }
-    function doneOrder(k) { db.ref('reqs/buy/'+k).update({ status: 'done' }); }
-    function cancelOrder(k, m, a) {
+    function doneOrder(k) { db.ref('orders/buy/'+k).update({ status: 'done' }); }
+    function rejectOrder(k, m, a) {
         db.ref('users/'+m).once('value', s => {
-            db.ref('users/'+m).update({ balance: (Number(s.val().balance) + Number(a)).toFixed(2) });
-            db.ref('reqs/buy/'+k).update({ status: 'rejected' });
+            db.ref('users/'+m).update({ balance: (parseFloat(s.val().balance) + parseFloat(a)).toFixed(2) });
+            db.ref('orders/buy/'+k).update({ status: 'rejected' });
         });
     }
-    function addProd() {
+    function addNewProduct() {
         const r = new FileReader();
-        r.onload = e => db.ref('products').push({ name: document.getElementById('adm-n').value, price: document.getElementById('adm-p').value, img: e.target.result });
+        r.onload = e => db.ref('products').push({ n: document.getElementById('adm-n').value, p: document.getElementById('adm-p').value, img: e.target.result });
         r.readAsDataURL(document.getElementById('adm-i').files[0]); alert("تم النشر");
     }
 
-    loadStore();
+    loadProducts();
 </script>
 </body>
 </html>
