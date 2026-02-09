@@ -3,59 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Helmy Card - Ultimate</title>
+    <title>Helmy Card - Final Ultimate</title>
+    
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap');
-        :root { --gold: #bf953f; --gold-grad: linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7); --bg: #0c0c0c; }
-        body { font-family: 'Tajawal', sans-serif; background: var(--bg); color: #fff; margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; }
         
-        .master-brand-title { font-size: 38px; font-weight: 900; background: var(--gold-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 15px 0; }
-        #emptyState { display: none; text-align: center; margin-top: 50px; border: 1px solid var(--gold); padding: 30px; border-radius: 25px; }
-        
-        .tabs-container { display: flex; gap: 10px; overflow-x: auto; width: 100%; max-width: 480px; padding: 10px 0; }
-        .tab-btn { background: #1a1a1a; border: 1px solid #333; color: #888; padding: 10px 20px; border-radius: 25px; cursor: pointer; white-space: nowrap; }
-        .tab-btn.active { background: var(--gold-grad); color: #000; font-weight: bold; border: none; }
+        :root {
+            --gold: #bf953f;
+            --gold-grad: linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7);
+            --bg: #0c0c0c;
+            --input-bg: #161616;
+            --card-border: #2a2a2a;
+        }
 
-        .main-container { width: 100%; max-width: 480px; border: 2px solid var(--gold); border-radius: 35px; padding: 25px; background: #0c0c0c; display: none; box-shadow: 0 20px 50px rgba(0,0,0,0.9); }
-        .withdraw-box { border: 1px dashed var(--gold); border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 25px; cursor: pointer; background: rgba(191,149,63,0.05); }
-        .input-group { margin-bottom: 20px; text-align: right; }
-        label { display: block; color: var(--gold); font-size: 14px; margin-bottom: 8px; font-weight: bold; }
-        input, select { width: 100%; background: #1a1a1a; border: 1px solid #333; border-radius: 15px; padding: 14px; color: #fff; outline: none; font-family: 'Tajawal'; }
-        
-        .total-box { background: #111; border-radius: 20px; padding: 20px; text-align: center; margin: 25px 0; border: 1px solid #222; }
-        .submit-btn { width: 100%; padding: 18px; background: var(--gold-grad); border: none; border-radius: 20px; font-size: 20px; font-weight: 900; color: #000; cursor: pointer; }
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--bg);
+            color: #fff; margin: 0; padding: 15px;
+            display: flex; flex-direction: column; align-items: center;
+        }
 
-        #adminPanel { display: none; position: fixed; inset: 0; background: #000; z-index: 9999; overflow-y: auto; padding: 15px; }
-        .admin-content { background: #0c0c0c; border: 1px solid var(--gold); border-radius: 25px; padding: 25px; max-width: 500px; margin: auto; }
-        .admin-sec { border-bottom: 1px solid #222; padding-bottom: 20px; margin-bottom: 20px; }
-        .v-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; margin-bottom: 10px; }
+        /* العنوان الرئيسي الثابت */
+        .master-brand {
+            font-size: 35px; font-weight: 900;
+            background: var(--gold-grad);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin: 20px 0; text-align: center; letter-spacing: 2px;
+        }
+
+        .tabs-container {
+            display: flex; gap: 12px; overflow-x: auto;
+            width: 100%; max-width: 500px; padding: 10px 5px;
+            margin-bottom: 15px;
+        }
+
+        .tab-btn {
+            background: var(--input-bg); border: 1px solid var(--card-border);
+            color: #aaa; padding: 12px 25px; border-radius: 30px;
+            cursor: pointer; white-space: nowrap; transition: 0.3s; font-weight: bold;
+        }
+
+        .tab-btn.active {
+            background: var(--gold-grad); color: #000; border: none;
+            box-shadow: 0 5px 15px rgba(191,149,63,0.4);
+        }
+
+        .main-card {
+            width: 100%; max-width: 480px;
+            border: 2px solid var(--gold); border-radius: 35px;
+            padding: 30px; background: #0e0e0e;
+            display: none; box-shadow: 0 25px 50px rgba(0,0,0,0.8);
+        }
+
+        .app-name-ui {
+            text-align: center; font-size: 24px; color: var(--gold);
+            margin-bottom: 20px; font-weight: 900;
+        }
+
+        .withdraw-info {
+            border: 1px dashed var(--gold); border-radius: 20px;
+            padding: 20px; text-align: center; margin-bottom: 25px;
+            background: rgba(191,149,63,0.03); cursor: pointer;
+        }
+
+        .input-group { margin-bottom: 22px; text-align: right; }
+        .input-group label {
+            display: block; color: var(--gold); font-size: 14px;
+            margin-bottom: 10px; font-weight: bold; padding-right: 5px;
+        }
+
+        input, select {
+            width: 100%; background: var(--input-bg); border: 1px solid var(--card-border);
+            border-radius: 15px; padding: 15px; color: #fff;
+            box-sizing: border-box; outline: none; font-family: 'Tajawal';
+            font-size: 16px; transition: 0.3s;
+        }
+        input:focus { border-color: var(--gold); }
+
+        .price-display-box {
+            background: #121212; border-radius: 20px; padding: 20px;
+            text-align: center; margin: 25px 0; border: 1px solid #1f1f1f;
+        }
+
+        .price-display-box h2 {
+            margin: 10px 0 0 0; font-size: 32px; font-weight: 900;
+            background: var(--gold-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .submit-btn {
+            width: 100%; padding: 20px; background: var(--gold-grad);
+            border: none; border-radius: 20px; font-size: 20px;
+            font-weight: 900; color: #000; cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+        }
+
+        /* لوحة التحكم */
+        #adminPanel {
+            display: none; position: fixed; inset: 0;
+            background: #000; z-index: 9999; overflow-y: auto; padding: 20px;
+        }
+
+        .admin-card {
+            background: #0c0c0c; border: 1px solid var(--gold);
+            border-radius: 30px; padding: 25px; max-width: 550px; margin: auto;
+        }
+
+        .admin-sec {
+            border-bottom: 1px solid #222; padding-bottom: 20px; margin-bottom: 20px;
+        }
+
+        .admin-sec h4 { color: var(--gold); margin-top: 0; }
+
+        .vip-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; margin-bottom: 10px; }
+
+        .loader {
+            border: 3px solid #f3f3f3; border-top: 3px solid var(--gold);
+            border-radius: 50%; width: 18px; height: 18px;
+            animation: spin 1s linear infinite; display: inline-block;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-<div class="master-brand-title">HELMY CARD</div>
+<div class="master-brand">HELMY CARD</div>
 
-<div id="emptyState">
-    <h2 style="color:var(--gold)">مرحباً حلمي</h2>
-    <button onclick="openAdmin()" class="submit-btn">فتح الإدارة ⚙️</button>
+<div id="noApps" style="display:none; text-align:center; border:1px solid var(--gold); padding:40px; border-radius:30px;">
+    <h3>أهلاً بك في نظام حلمي كارد</h3>
+    <p>لا يوجد برامج حالياً، افتح الإدارة لإضافة أول برنامج.</p>
+    <button onclick="openAdmin()" class="submit-btn" style="width:auto; padding:15px 40px;">فتح لوحة التحكم ⚙️</button>
 </div>
 
 <div class="tabs-container" id="tabsList"></div>
 
-<div class="main-container" id="userUI">
-    <h1 id="ui_site_title" class="master-brand-title" style="font-size: 28px; margin: 0 0 15px 0;" onclick="openAdmin()"></h1>
-    
-    <div class="withdraw-box" onclick="copyId()">
-        <span style="font-size: 13px;">ID سحب: <b id="ui_withdraw_id" style="font-size: 22px;"></b></span><br>
-        <span style="font-size: 15px; color: gold;">الاسم: <b id="ui_receiver_name"></b></span>
+<div class="main-card" id="userUI">
+    <div class="app-name-ui" id="ui_app_name" onclick="openAdmin()"></div>
+
+    <div class="withdraw-info" onclick="copyId()">
+        <small style="color:#888;">ID السحب (اضغط للنسخ)</small><br>
+        <b id="ui_withdraw_id" style="font-size: 24px; color: var(--gold);"></b><br>
+        <span id="ui_receiver_name" style="color:#eee;"></span>
     </div>
 
     <div class="input-group">
-        <label>الأيدي المسحوب منه</label>
-        <input type="text" id="in_uid" placeholder="أدخل الأيدي">
+        <label>ID الحساب (المسحوب منه)</label>
+        <input type="text" id="in_uid" placeholder="أدخل الأيدي هنا">
     </div>
 
     <div class="input-group">
@@ -64,200 +159,292 @@
     </div>
 
     <div class="input-group">
-        <label>طريقة الدفع</label>
+        <label>طريقة السحب</label>
         <select id="in_method" onchange="calc()">
             <option value="cash">كاش (فودافون/اتصالات/أورنج)</option>
-            <option value="agent">سعر الوكلاء الموحد</option>
-            <option value="vip">وكيل VIP 💎</option>
+            <option value="agent">سعر الوكيل الموحد</option>
+            <option value="vip">وكيل مخصص VIP 💎</option>
         </select>
     </div>
 
-    <div id="vip_div" class="input-group" style="display:none;">
-        <label>اختر وكيل VIP</label>
+    <div id="vip_box" class="input-group" style="display:none;">
+        <label>اختر الوكيل المخصص</label>
         <select id="in_vip_list" onchange="calc()"></select>
     </div>
 
     <div class="input-group">
-        <label id="lbl_amount">المبلغ المطلوب</label>
+        <label id="lbl_amount">الكمية</label>
         <input type="number" id="in_val" value="0" step="0.01" oninput="calc()">
+        <div id="points_hint" style="font-size:12px; color:var(--gold); margin-top:5px; display:none;"></div>
     </div>
 
-    <div class="total-box">
-        <small id="ui_rate" style="color:var(--gold)"></small>
+    <div class="price-display-box">
+        <small id="ui_usd_val" style="color:#888; display:block; margin-bottom:5px;"></small>
+        <small id="ui_rate"></small>
         <h2 id="ui_total">0.00 ج.م</h2>
     </div>
 
-    <div class="input-group"><label>رقم محفظة الاستلام</label><input type="text" id="in_wallet"></div>
-    <div class="input-group"><label>إثبات التحويل (صورة)</label><input type="file" id="in_file" accept="image/*"></div>
+    <div class="input-group"><label>رقم المحفظة</label><input type="text" id="in_wallet" placeholder="01xxxxxxxxx"></div>
+    <div class="input-group"><label>صورة إثبات التحويل</label><input type="file" id="in_file" accept="image/*"></div>
 
-    <button class="submit-btn" id="btnSubmit" onclick="send()">إرسال الطلب الآن 🚀</button>
+    <button class="submit-btn" id="btnSubmit" onclick="sendOrder()">إرسال الطلب الآن 🚀</button>
 </div>
 
 <div id="adminPanel">
-    <div class="admin-content">
-        <h2 style="text-align:center; color: var(--gold);">⚙️ إدارة البرامج</h2>
+    <div class="admin-card">
+        <h2 style="text-align:center; color:var(--gold);">⚙️ إعدادات الإدارة</h2>
+        
         <div class="admin-sec">
-            <h4>➕ برنامج جديد</h4>
-            <div style="display:flex; gap:10px;"><input type="text" id="new_app_name"><button onclick="createApp()">إضافة</button></div>
+            <h4>➕ إضافة برنامج</h4>
+            <div style="display:flex; gap:10px;">
+                <input type="text" id="new_app_name" placeholder="اسم البرنامج">
+                <button onclick="createApp()" style="background:#28a745; color:#fff; border:none; padding:10px 20px; border-radius:15px; cursor:pointer;">إضافة</button>
+            </div>
         </div>
 
         <div id="editZone" style="display:none;">
             <div class="admin-sec">
-                <h4>🛡️ نوع البرنامج ومنع التكرار</h4>
+                <h4>🛡️ نوع النظام ومنع التكرار</h4>
                 <label>نوع العملة:</label>
-                <select id="adm_unit_type">
-                    <option value="دولار ($)">دولار ($)</option>
-                    <option value="نقاط (P)">نقاط (P)</option>
+                <select id="adm_mode" onchange="toggleAdminPoints()">
+                    <option value="usd">دولار مباشر ($)</option>
+                    <option value="points">نقاط محولة (Points)</option>
                 </select>
-                <label>منع التكرار (أيام):</label>
-                <input type="number" id="adm_anti_repeat">
+                <div id="adm_points_cfg" style="display:none; margin-top:10px; background:#1a1a1a; padding:10px; border-radius:10px;">
+                    <label>كل كم نقطة؟</label>
+                    <input type="number" id="adm_pt_count" placeholder="مثلاً: 1000">
+                    <label>يساوي كم دولار؟</label>
+                    <input type="number" id="adm_pt_usd" placeholder="مثلاً: 1">
+                </div>
+                <label style="margin-top:10px;">منع التكرار (أيام):</label>
+                <input type="number" id="adm_anti" placeholder="0 = لا يوجد منع">
             </div>
+
             <div class="admin-sec">
-                <h4>🔗 الروابط والإعدادات</h4>
+                <h4>🔗 الربط والبيانات</h4>
                 <label>Script URL</label><input type="text" id="adm_sheet">
                 <label>Bot Token</label><input type="text" id="adm_token">
                 <label>Chat ID</label><input type="text" id="adm_chat">
-                <label>ID السحب</label><input type="text" id="adm_withdraw_id">
-                <label>اسم المستلم</label><input type="text" id="adm_receiver_name">
+                <label>ID السحب</label><input type="text" id="adm_wid">
+                <label>اسم المستلم</label><input type="text" id="adm_rec">
             </div>
+
             <div class="admin-sec">
-                <h4>💰 الأسعار</h4>
-                <label>سعر الكاش</label><input type="number" id="adm_rate_cash">
-                <label>سعر الوكلاء</label><input type="number" id="adm_rate_agent">
+                <h4>💰 أسعار الدولار</h4>
+                <label>سعر الكاش</label><input type="number" id="adm_r_cash">
+                <label>سعر الوكلاء</label><input type="number" id="adm_r_agent">
             </div>
+
             <div class="admin-sec">
-                <h4>👥 وكلاء VIP</h4>
+                <h4>💎 وكلاء VIP</h4>
                 <div id="adm_vip_list"></div>
-                <button onclick="addVRow()">+ إضافة VIP</button>
+                <button onclick="addVRow()" style="width:100%; padding:10px; margin-top:10px; background:#333; color:#fff; border:none; border-radius:10px;">+ إضافة وكيل VIP</button>
             </div>
-            <button class="submit-btn" onclick="save()">✅ حفظ</button>
-            <button onclick="deleteApp()" style="background:red; width:100%; margin-top:10px;">🗑️ حذف</button>
+
+            <button class="submit-btn" onclick="save()">✅ حفظ كل الإعدادات</button>
+            <button onclick="deleteApp()" style="background:red; color:#fff; width:100%; margin-top:10px; border:none; padding:12px; border-radius:15px; cursor:pointer;">🗑️ حذف البرنامج</button>
         </div>
-        <button onclick="document.getElementById('adminPanel').style.display='none'" style="width:100%; margin-top:10px;">إغلاق</button>
+        <button onclick="document.getElementById('adminPanel').style.display='none'" style="width:100%; margin-top:15px; background:#222; color:#fff; border:none; padding:12px; border-radius:15px;">إغلاق</button>
     </div>
 </div>
 
 <script>
+    // Firebase Config
     const firebaseConfig = { databaseURL: "https://karak-13101-default-rtdb.firebaseio.com" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    let allApps = {}; let currentKey = "";
-    const DEFAULT_SCRIPT = "https://script.google.com/macros/s/AKfycbxfFvTfYyMOw5NZOZfDq1WwvW85BT_yM8uwa_i67mapybcCAbZrTOYZ0nS_S_HtCjQ9QQ/exec";
+    let allApps = {};
+    let currentKey = "";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxfFvTfYyMOw5NZOZfDq1WwvW85BT_yM8uwa_i67mapybcCAbZrTOYZ0nS_S_HtCjQ9QQ/exec";
 
-    db.ref('Helmy_Final_V9').on('value', (s) => {
-        allApps = s.val() || {}; const keys = Object.keys(allApps);
-        if (keys.length === 0) { document.getElementById('emptyState').style.display = "block"; document.getElementById('userUI').style.display = "none"; }
-        else { document.getElementById('emptyState').style.display = "none"; document.getElementById('userUI').style.display = "block"; renderTabs(); if (!currentKey || !allApps[currentKey]) loadApp(keys[0]); else loadApp(currentKey); }
+    // جلب البيانات
+    db.ref('Helmy_Final_Ultimate').on('value', (s) => {
+        allApps = s.val() || {};
+        const keys = Object.keys(allApps);
+        if (keys.length === 0) {
+            document.getElementById('noApps').style.display = "block";
+            document.getElementById('userUI').style.display = "none";
+        } else {
+            document.getElementById('noApps').style.display = "none";
+            document.getElementById('userUI').style.display = "block";
+            renderTabs();
+            if (!currentKey || !allApps[currentKey]) loadApp(keys[0]);
+            else loadApp(currentKey);
+        }
     });
 
     function renderTabs() {
         const h = document.getElementById('tabsList'); h.innerHTML = "";
         for (let k in allApps) {
-            let b = document.createElement('button'); b.className = `tab-btn ${k === currentKey ? 'active' : ''}`;
+            let b = document.createElement('button');
+            b.className = `tab-btn ${k === currentKey ? 'active' : ''}`;
             b.innerText = k; b.onclick = () => loadApp(k); h.appendChild(b);
         }
     }
 
     function loadApp(k) {
         currentKey = k; const d = allApps[k];
-        document.getElementById('ui_site_title').innerText = k;
-        document.getElementById('ui_withdraw_id').innerText = d.withdraw_id || "";
+        document.getElementById('ui_app_name').innerText = k;
+        document.getElementById('ui_withdraw_id').innerText = d.withdraw_id || "---";
         document.getElementById('ui_receiver_name').innerText = d.receiver_name || "";
-        document.getElementById('lbl_amount').innerText = `المبلغ المطلوب بـ ${d.unit_type || 'دولار ($)'}`;
-        renderTabs(); calc();
+        
+        // ضبط العناوين حسب (دولار أم نقاط)
+        if(d.mode === "points") {
+            document.getElementById('lbl_amount').innerText = "الكمية بالنقاط (P)";
+            document.getElementById('points_hint').style.display = "block";
+            document.getElementById('points_hint').innerText = `كل ${d.pt_count} نقطة = ${d.pt_usd}$`;
+        } else {
+            document.getElementById('lbl_amount').innerText = "الكمية بالدولار ($)";
+            document.getElementById('points_hint').style.display = "none";
+        }
+
+        renderTabs();
+        calc();
     }
 
     function calc() {
         const d = allApps[currentKey]; if(!d) return;
-        const m = document.getElementById('in_method').value;
-        const val = parseFloat(document.getElementById('in_val').value) || 0;
-        let r = 0;
-        document.getElementById('vip_div').style.display = (m === "vip") ? "block" : "none";
-        if (m === "cash") r = d.rate_cash || 0;
-        else if (m === "agent") r = d.rate_agent || 0;
-        else if (m === "vip") {
+        const method = document.getElementById('in_method').value;
+        const inputVal = parseFloat(document.getElementById('in_val').value) || 0;
+        let usdVal = inputVal;
+
+        // تحويل النقاط لدولار لو النظام نقاط
+        if(d.mode === "points" && d.pt_count > 0) {
+            usdVal = (inputVal / d.pt_count) * d.pt_usd;
+            document.getElementById('ui_usd_val').innerText = `ما يعادل: ${usdVal.toFixed(2)}$`;
+        } else {
+            document.getElementById('ui_usd_val').innerText = "";
+        }
+
+        let rate = 0;
+        document.getElementById('vip_box').style.display = (method === "vip") ? "block" : "none";
+
+        if (method === "cash") rate = d.rate_cash || 0;
+        else if (method === "agent") rate = d.rate_agent || 0;
+        else if (method === "vip") {
             const vUi = document.getElementById('in_vip_list');
             if (vUi.dataset.app !== currentKey) {
                 vUi.innerHTML = "";
-                if(d.vips) d.vips.forEach(v => { let o = document.createElement('option'); o.value = v.price; o.text = `${v.code} (${v.price})`; vUi.add(o); });
+                if(d.vips) d.vips.forEach(v => {
+                    let o = document.createElement('option'); o.value = v.price; o.text = `${v.code} (${v.price})`; vUi.add(o);
+                });
                 vUi.dataset.app = currentKey;
             }
-            r = parseFloat(vUi.value) || 0;
+            rate = parseFloat(vUi.value) || 0;
         }
-        document.getElementById('ui_rate').innerText = "سعر الصرف: " + r;
-        document.getElementById('ui_total').innerText = (val * r).toFixed(2) + " ج.م";
+
+        document.getElementById('ui_rate').innerText = "سعر صرف الدولار: " + rate;
+        document.getElementById('ui_total').innerText = (usdVal * rate).toFixed(2) + " ج.م";
     }
 
     function openAdmin() { if(prompt("كلمة السر:") === "1997") { document.getElementById('adminPanel').style.display = "block"; if(currentKey) loadAdmin(); } }
 
     function loadAdmin() {
-        const d = allApps[currentKey]; document.getElementById('editZone').style.display = "block";
-        document.getElementById('adm_sheet').value = d.sheet_link || DEFAULT_SCRIPT;
+        const d = allApps[currentKey];
+        document.getElementById('editZone').style.display = "block";
+        document.getElementById('adm_sheet').value = d.sheet_link || SCRIPT_URL;
         document.getElementById('adm_token').value = d.bot_token || "";
         document.getElementById('adm_chat').value = d.chat_id || "";
-        document.getElementById('adm_withdraw_id').value = d.withdraw_id || "";
-        document.getElementById('adm_receiver_name').value = d.receiver_name || "";
-        document.getElementById('adm_rate_cash').value = d.rate_cash || "";
-        document.getElementById('adm_rate_agent').value = d.rate_agent || "";
-        document.getElementById('adm_anti_repeat').value = d.anti_repeat || 0;
-        document.getElementById('adm_unit_type').value = d.unit_type || "دولار ($)";
+        document.getElementById('adm_wid').value = d.withdraw_id || "";
+        document.getElementById('adm_rec').value = d.receiver_name || "";
+        document.getElementById('adm_r_cash').value = d.rate_cash || "";
+        document.getElementById('adm_r_agent').value = d.rate_agent || "";
+        document.getElementById('adm_anti').value = d.anti_repeat || 0;
+        document.getElementById('adm_mode').value = d.mode || "usd";
+        document.getElementById('adm_pt_count').value = d.pt_count || 1000;
+        document.getElementById('adm_pt_usd').value = d.pt_usd || 1;
+        toggleAdminPoints();
         const l = document.getElementById('adm_vip_list'); l.innerHTML = "";
         if(d.vips) d.vips.forEach(v => addVRow(v.code, v.price));
     }
 
+    function toggleAdminPoints() {
+        document.getElementById('adm_points_cfg').style.display = (document.getElementById('adm_mode').value === "points") ? "block" : "none";
+    }
+
     function addVRow(c="", p="") {
-        const div = document.createElement('div'); div.className="v-row";
-        div.innerHTML = `<input type="text" placeholder="كود" value="${c}" class="vc"><input type="number" placeholder="سعر" value="${p}" class="vp"><button onclick="this.parentElement.remove()">X</button>`;
+        const div = document.createElement('div'); div.className="vip-row";
+        div.innerHTML = `<input type="text" placeholder="كود" value="${c}" class="vc"><input type="number" placeholder="سعر" value="${p}" class="vp"><button onclick="this.parentElement.remove()" style="background:red; border:none; color:#fff; border-radius:10px;">X</button>`;
         document.getElementById('adm_vip_list').appendChild(div);
     }
 
     function createApp() {
         const n = document.getElementById('new_app_name').value; if(!n) return;
-        db.ref('Helmy_Final_V9/' + n).set({ rate_cash: 45, rate_agent: 46, sheet_link: DEFAULT_SCRIPT, anti_repeat: 0, unit_type: "دولار ($)" });
+        db.ref('Helmy_Final_Ultimate/' + n).set({ mode: "usd", rate_cash: 45, rate_agent: 46.5, sheet_link: SCRIPT_URL });
+        document.getElementById('new_app_name').value = "";
     }
 
     function save() {
-        const vips = []; document.querySelectorAll('.v-row').forEach(r => {
-            let c = r.querySelector('.vc').value; let p = r.querySelector('.vp').value; if(c && p) vips.push({code: c, price: p});
+        const vips = [];
+        document.querySelectorAll('.vip-row').forEach(r => {
+            let c = r.querySelector('.vc').value; let p = r.querySelector('.vp').value;
+            if(c && p) vips.push({code: c, price: p});
         });
-        db.ref('Helmy_Final_V9/' + currentKey).update({
-            sheet_link: document.getElementById('adm_sheet').value, bot_token: document.getElementById('adm_token').value,
-            chat_id: document.getElementById('adm_chat').value, withdraw_id: document.getElementById('adm_withdraw_id').value,
-            receiver_name: document.getElementById('adm_receiver_name').value, rate_cash: parseFloat(document.getElementById('adm_rate_cash').value),
-            rate_agent: parseFloat(document.getElementById('adm_rate_agent').value), anti_repeat: parseInt(document.getElementById('adm_anti_repeat').value) || 0,
-            unit_type: document.getElementById('adm_unit_type').value, vips: vips
-        }).then(() => alert("تم الحفظ ✅"));
+        db.ref('Helmy_Final_Ultimate/' + currentKey).update({
+            sheet_link: document.getElementById('adm_sheet').value,
+            bot_token: document.getElementById('adm_token').value,
+            chat_id: document.getElementById('adm_chat').value,
+            withdraw_id: document.getElementById('adm_wid').value,
+            receiver_name: document.getElementById('adm_rec').value,
+            rate_cash: parseFloat(document.getElementById('adm_r_cash').value),
+            rate_agent: parseFloat(document.getElementById('adm_r_agent').value),
+            anti_repeat: parseInt(document.getElementById('adm_anti').value) || 0,
+            mode: document.getElementById('adm_mode').value,
+            pt_count: parseFloat(document.getElementById('adm_pt_count').value),
+            pt_usd: parseFloat(document.getElementById('adm_pt_usd').value),
+            vips: vips
+        }).then(() => alert("تم الحفظ بنجاح ✅"));
     }
 
-    async function send() {
-        const d = allApps[currentKey]; const f = document.getElementById('in_file').files[0];
-        const uid = document.getElementById('in_uid').value.trim(); const val = document.getElementById('in_val').value;
-        const wal = document.getElementById('in_wallet').value; const btn = document.getElementById('btnSubmit');
+    async function sendOrder() {
+        const d = allApps[currentKey];
+        const f = document.getElementById('in_file').files[0];
+        const uid = document.getElementById('in_uid').value.trim();
+        const val = document.getElementById('in_val').value;
+        const wal = document.getElementById('in_wallet').value;
+        const btn = document.getElementById('btnSubmit');
 
-        if(!f || !uid || !wal || val <= 0) return alert("اكمل البيانات!");
-        btn.disabled = true; btn.innerText = "جاري الفحص...";
+        if(!f || !uid || !wal || val <= 0) return alert("يرجى ملء كافة البيانات!");
 
+        btn.disabled = true;
+        btn.innerHTML = `<span class="loader"></span> جاري التحقق...`;
+
+        // منع التكرار
         if (d.anti_repeat > 0) {
             try {
-                const res = await (await fetch(`${d.sheet_link}?checkId=${uid}&days=${d.anti_repeat}&sheet=${currentKey}`)).text();
-                if (res === "EXISTS") { alert("❌ الأيدي مكرر!"); btn.disabled = false; btn.innerText = "إرسال الطلب الآن 🚀"; return; }
+                const check = await fetch(`${d.sheet_link}?checkId=${uid}&days=${d.anti_repeat}&sheet=${currentKey}`);
+                const res = await check.text();
+                if (res === "EXISTS") {
+                    alert(`❌ هذا الأيدي مسجل مسبقاً خلال الـ ${d.anti_repeat} أيام الماضية.`);
+                    btn.disabled = false; btn.innerHTML = "إرسال الطلب الآن 🚀";
+                    return;
+                }
             } catch (e) { }
         }
 
-        const fd = new FormData(); fd.append('chat_id', d.chat_id); fd.append('photo', f);
-        fd.append('caption', `📦 البرنامج: ${currentKey}\n🆔 الأيدي: ${uid}\n👤 الوكيل: ${document.getElementById('in_agent_name').value}\n💰 الكمية: ${val} ${d.unit_type}\n💵 الإجمالي: ${document.getElementById('ui_total').innerText}\n🏦 المحفظة: ${wal}`);
+        // Telegram
+        const fd = new FormData();
+        fd.append('chat_id', d.chat_id); fd.append('photo', f);
+        fd.append('caption', `📦 البرنامج: ${currentKey}\n🆔 الأيدي: ${uid}\n👤 الوكيل: ${document.getElementById('in_agent_name').value}\n💰 الكمية: ${val} (${d.mode})\n💵 الإجمالي: ${document.getElementById('ui_total').innerText}\n🏦 المحفظة: ${wal}`);
         fetch(`https://api.telegram.org/bot${d.bot_token}/sendPhoto`, { method: 'POST', body: fd });
 
-        fetch(d.sheet_link, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
-            programName: currentKey, uid: uid, agent: document.getElementById('in_agent_name').value,
-            usd: val, totalEgp: document.getElementById('ui_total').innerText, wallet: wal,
-            day: ["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"][(new Date()).getDay()], date: (new Date()).toLocaleDateString('ar-EG')
-        })});
-        alert("تم الإرسال ✅"); location.reload();
+        // Sheets
+        fetch(d.sheet_link, {
+            method: 'POST', mode: 'no-cors',
+            body: JSON.stringify({
+                programName: currentKey, uid: uid, agent: document.getElementById('in_agent_name').value,
+                usd: val, totalEgp: document.getElementById('ui_total').innerText, wallet: wal,
+                day: ["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"][(new Date()).getDay()],
+                date: (new Date()).toLocaleDateString('ar-EG')
+            })
+        });
+
+        alert("تم إرسال طلبك بنجاح! ✅"); location.reload();
     }
-    function copyId() { navigator.clipboard.writeText(document.getElementById('ui_withdraw_id').innerText); alert("تم النسخ ✅"); }
-    function deleteApp() { if(confirm("حذف؟")) db.ref('Helmy_Final_V9/' + currentKey).remove(); }
+
+    function copyId() { navigator.clipboard.writeText(document.getElementById('ui_withdraw_id').innerText); alert("تم نسخ الأيدي ✅"); }
+    function deleteApp() { if(confirm("هل أنت متأكد من حذف البرنامج؟")) db.ref('Helmy_Final_Ultimate/' + currentKey).remove(); }
 </script>
 </body>
 </html>
