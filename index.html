@@ -3,245 +3,516 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KAREM CARD | PRO</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
+    <title>Helmy Card - The Master System</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
     <style>
-        :root { --main-red: #ff0000; --bg-dark: #000; --card-dark: #111; --text-white: #fff; }
-        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; transition: 0.3s; }
-        body { background: var(--bg-dark); color: var(--text-white); margin: 0; padding-bottom: 70px; }
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap');
+        
+        :root {
+            --gold: linear-gradient(135deg, #bf953f 0%, #fcf6ba 45%, #b38728 70%, #fbf5b7 100%);
+            --bg: #050505;
+            --card-bg: #0d0d0d;
+            --input-bg: #161616;
+            --text-gold: #fcf6ba;
+            --shadow: 0 15px 35px rgba(0,0,0,0.8), 0 5px 15px rgba(191,149,63,0.1);
+        }
 
-        /* الهيدر زي اللي في الصور */
-        header { padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--main-red); background: #000; position: sticky; top: 0; z-index: 1000; }
-        .logo { font-size: 1.5rem; font-weight: 900; color: var(--main-red); font-style: italic; }
-        .balance-badge { background: #004d00; color: #00ff00; padding: 5px 15px; border-radius: 20px; font-weight: bold; border: 1px solid #00ff00; }
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--bg);
+            color: #ffffff;
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
 
-        /* القائمة الجانبية */
-        .sidebar { position: fixed; right: -280px; top: 0; width: 280px; height: 100%; background: #0a0a0a; z-index: 2001; padding: 20px; border-left: 2px solid var(--main-red); }
-        .sidebar.active { right: 0; }
-        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; z-index: 2000; }
-        .overlay.active { display: block; }
+        /* العنوان الرئيسي */
+        .master-title {
+            font-size: 42px;
+            font-weight: 900;
+            background: var(--gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            cursor: pointer;
+            margin: 10px 0;
+            text-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
 
-        /* الحاويات والشبكة */
-        .container { padding: 15px; }
-        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
-        .card { background: var(--card-dark); border-radius: 15px; padding: 10px; text-align: center; border: 1px solid #333; cursor: pointer; position: relative; }
-        .card:hover { border-color: var(--main-red); }
-        .card img { width: 100%; aspect-ratio: 1/1; border-radius: 10px; object-fit: cover; }
-        .card-price { color: var(--main-red); font-weight: bold; margin-top: 5px; display: block; }
+        /* التبويبات الذكية */
+        .tabs-wrapper {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 30px;
+            max-width: 600px;
+        }
 
-        /* واجهة الطلب (نفس ستايل الصورة) */
-        .full-page { position: fixed; inset: 0; background: #000; z-index: 3000; display: none; flex-direction: column; padding: 20px; overflow-y: auto; }
-        .full-page.active { display: flex; }
-        .input-group { background: #1a1a1a; padding: 15px; border-radius: 15px; border: 1px solid #444; margin-bottom: 15px; }
-        .input-group label { display: block; color: #888; font-size: 0.8rem; margin-bottom: 5px; }
-        input { background: transparent; border: 1px solid #333; color: #fff; width: 100%; padding: 10px; border-radius: 8px; font-size: 1rem; }
+        .tab-btn {
+            background: #1a1a1a;
+            color: #aaa;
+            border: 1px solid #333;
+            padding: 12px 24px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: 800;
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-        /* أزرار لوحة التحكم (تم الشحن / رفض) */
-        .btn-done { background: #28a745; color: #fff; border: none; padding: 12px; border-radius: 10px; width: 100%; font-weight: bold; margin-bottom: 5px; }
-        .btn-reject { background: #dc3545; color: #fff; border: none; padding: 12px; border-radius: 10px; width: 100%; font-weight: bold; }
-        .btn-add { background: var(--main-red); color: #fff; border: none; padding: 12px; border-radius: 10px; width: 100%; font-weight: bold; margin-top: 10px; }
+        .tab-btn.active {
+            background: var(--gold);
+            color: #000;
+            border-color: transparent;
+            box-shadow: 0 0 15px rgba(191,149,63,0.4);
+            transform: scale(1.05);
+        }
 
-        .hidden { display: none !important; }
+        /* كارت النموذج */
+        .main-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(191, 149, 63, 0.2);
+            border-radius: 35px;
+            padding: 35px;
+            width: 100%;
+            max-width: 460px;
+            box-shadow: var(--shadow);
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn { from {opacity: 0; transform: translateY(10px);} to {opacity: 1; transform: translateY(0);} }
+
+        /* منطقة التنبيهات والأيدي */
+        .info-header { text-align: center; margin-bottom: 25px; }
+        .warning-text { color: #ff4d4d; font-size: 12px; font-weight: 700; background: rgba(255,77,77,0.1); padding: 8px; border-radius: 10px; margin: 10px 0; }
+        
+        .copy-card {
+            background: rgba(191,149,63,0.05);
+            border: 1px dashed #bf953f;
+            border-radius: 20px;
+            padding: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .copy-card:active { transform: scale(0.98); background: rgba(191,149,63,0.15); }
+
+        /* الخانات */
+        .group { margin-bottom: 20px; width: 100%; }
+        label { display: block; margin-bottom: 8px; font-size: 14px; color: var(--text-gold); font-weight: bold; }
+        input, select {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid rgba(191,149,63,0.2);
+            border-radius: 15px;
+            padding: 15px;
+            color: #fff;
+            font-size: 15px;
+            box-sizing: border-box;
+            outline: none;
+            transition: 0.3s;
+        }
+        input:focus { border-color: #bf953f; box-shadow: 0 0 10px rgba(191,149,63,0.2); }
+
+        /* صناديق الحساب */
+        .result-box {
+            background: linear-gradient(to bottom, rgba(191,149,63,0.1), transparent);
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            margin: 20px 0;
+            border: 1px solid rgba(191,149,63,0.1);
+        }
+        .total-val { font-size: 30px; font-weight: 900; color: #fff; margin-top: 5px; }
+
+        .submit-btn {
+            width: 100%;
+            padding: 20px;
+            background: var(--gold);
+            border: none;
+            border-radius: 18px;
+            font-size: 20px;
+            font-weight: 900;
+            color: #000;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .submit-btn:hover { filter: brightness(1.1); transform: translateY(-2px); }
+
+        /* لوحة التحكم */
+        #adminScreen {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.98);
+            z-index: 9999;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .admin-inner {
+            background: #0a0a0a;
+            border: 2px solid #bf953f;
+            border-radius: 30px;
+            max-width: 600px;
+            margin: auto;
+            padding: 30px;
+        }
+        .admin-section { background: #111; padding: 20px; border-radius: 20px; margin-bottom: 20px; border: 1px solid #222; }
+        .agent-item { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
-<header>
-    <div id="nav-user" class="hidden" style="display:flex; align-items:center; gap:10px;">
-        <div class="balance-badge" id="u-bal">0.00 ج</div>
-        <i class="fa-solid fa-bars" onclick="toggleMenu()" style="font-size: 1.5rem; cursor:pointer;"></i>
-    </div>
-    <div class="logo">KAREM CARD</div>
-    <button id="nav-login" onclick="openPage('page-login')" style="background:var(--main-red); border:none; color:#fff; padding:8px 15px; border-radius:8px; font-weight:bold;">دخول</button>
-</header>
+<h1 class="master-title" onclick="openAdmin()">Helmy Card</h1>
 
-<div class="overlay" onclick="toggleMenu()"></div>
-<div class="sidebar" id="sidebar">
-    <h3 id="side-username" style="color:var(--main-red);">مرحباً</h3>
-    <hr style="border:0; border-top:1px solid #222;">
-    <p onclick="location.reload()"><i class="fa-solid fa-house"></i> الرئيسية</p>
-    <p onclick="openPage('page-charge')"><i class="fa-solid fa-wallet"></i> شحن الرصيد</p>
-    <p id="admin-link" class="hidden" onclick="openPage('page-admin')"><i class="fa-solid fa-user-shield"></i> لوحة التحكم</p>
-    <p onclick="location.reload()" style="color:red; margin-top:50px;"><i class="fa-solid fa-power-off"></i> خروج</p>
-</div>
+<div class="tabs-wrapper" id="navTabs"></div>
 
-<div class="container">
-    <div id="grid-prods" class="grid">جاري تحميل الخدمات...</div>
-</div>
-
-<div id="page-buy" class="full-page">
-    <h2 id="buy-title" style="text-align:center; color:var(--main-red);">--</h2>
-    <div class="input-group">
-        <div style="display:flex; gap:10px;">
-            <div style="flex:1;"><label>الكمية</label><input type="number" id="in-qty" value="1000" oninput="calc()"></div>
-            <div style="flex:1;"><label>الإجمالي (ج)</label><div id="in-total" style="font-size:1.4rem; font-weight:bold; padding-top:5px; color:#28a745;">0</div></div>
+<div class="main-card" id="userForm">
+    <div class="info-header">
+        <h2 id="app_title" style="margin:0; color:gold;"></h2>
+        <div id="app_warn" class="warning-text"></div>
+        <div class="copy-card" onclick="copyValue()">
+            <small style="color: #888;">ID السحب (اضغط للنسخ)</small><br>
+            <span id="app_aid" style="font-size: 20px; font-weight: 900;"></span><br>
+            <small>المستلم: <b id="app_aname"></b></small>
         </div>
     </div>
-    <div class="input-group"><label>ID اللاعب</label><input type="text" id="in-pid" placeholder="أدخل ID الحساب"></div>
-    <button class="btn-done" onclick="submitOrder()">تأكيد الشراء (خصم فوري)</button>
-    <button class="btn-reject" onclick="closePages()" style="background:#444;">إلغاء</button>
-</div>
 
-<div id="page-charge" class="full-page">
-    <h2 style="color:var(--main-red); text-align:center;">شحن رصيد حسابي</h2>
-    <div class="input-group"><label>المبلغ المطلوب شحنه</label><input type="number" id="c-amt" placeholder="0.00"></div>
-    <div class="input-group"><label>صورة التحويل (سكرين شوت)</label><input type="file" id="c-file" accept="image/*"></div>
-    <button class="btn-done" onclick="submitCharge()">إرسال الطلب للمدير</button>
-    <button class="btn-reject" onclick="closePages()" style="background:#444;">رجوع</button>
-</div>
-
-<div id="page-admin" class="full-page">
-    <h2 style="color:var(--main-red)">لوحة الإدارة ⚙️</h2>
-    <div class="input-group">
-        <h4>إضافة خدمة جديدة</h4>
-        <input type="text" id="adm-n" placeholder="اسم الخدمة" style="margin-bottom:5px;">
-        <input type="number" id="adm-p" placeholder="السعر لكل 1000" style="margin-bottom:5px;">
-        <input type="file" id="adm-i">
-        <button class="btn-add" onclick="addNewProduct()">إضافة للمتجر</button>
+    <div class="group">
+        <label id="label_uid">الأيدي</label>
+        <input type="text" id="inp_uid" placeholder="أدخل ID حسابك">
     </div>
-    <h3>مراجعة شحن الرصيد 📩</h3>
-    <div id="adm-charges"></div>
-    <h3>طلبات العملاء 🛒</h3>
-    <div id="adm-orders"></div>
-    <button class="btn-reject" onclick="closePages()" style="background:#444;">خروج</button>
+
+    <div class="group">
+        <label>طريقة الدفع</label>
+        <select id="inp_method" onchange="updateView()">
+            <option value="cash">كاش (فودافون/اتصالات/أورنج)</option>
+            <option value="agent_all">سعر الوكلاء العام</option>
+            <option value="agent_vip">وكيل مسجل (كود خاص) 🔽</option>
+        </select>
+    </div>
+
+    <div class="group" id="vipGroup" style="display: none;">
+        <label>اختر كود الوكيل</label>
+        <select id="inp_vip_list" onchange="runCalc()"></select>
+    </div>
+
+    <div class="group" id="pointsGroup" style="display: none;">
+        <label id="label_points">عدد النقاط</label>
+        <input type="number" id="inp_points" placeholder="0" oninput="runCalc()">
+    </div>
+
+    <div class="group">
+        <label>المبلغ بالدولار ($)</label>
+        <input type="number" id="inp_usd" placeholder="0.00" oninput="runCalc()">
+    </div>
+
+    <div class="result-box">
+        <div style="font-size: 12px; color: gold; margin-bottom: 5px;" id="rate_info">سعر الصرف: 0</div>
+        <div class="total-val" id="res_egp">0.00 ج.م</div>
+    </div>
+
+    <div class="group">
+        <label>رقم المحفظة (الذي استلمت منه)</label>
+        <input type="text" id="inp_wallet" placeholder="01xxxxxxxxx">
+    </div>
+
+    <div class="group">
+        <label>إرفاق صورة التحويل</label>
+        <input type="file" id="inp_file" accept="image/*">
+    </div>
+
+    <button class="submit-btn" onclick="sendMasterOrder()">إرسال الطلب الآن 🚀</button>
 </div>
 
-<div id="page-login" class="full-page" style="justify-content:center; align-items:center;">
-    <div style="width:100%; max-width:350px; text-align:center; border:1px solid var(--main-red); padding:20px; border-radius:20px;">
-        <h2 style="color:var(--main-red)">دخول الوكلاء</h2>
-        <input type="email" id="l-email" placeholder="الايميل" style="margin-bottom:10px;">
-        <input type="password" id="l-pass" placeholder="كلمة المرور" style="margin-bottom:20px;">
-        <button class="btn-done" onclick="handleAuth()">دخول / حساب جديد</button>
-        <button class="btn-reject" onclick="closePages()" style="background:#444;">إغلاق</button>
+<div id="adminScreen">
+    <div class="admin-inner">
+        <h2 style="text-align: center; color: gold;">⚙️ لوحة التحكم المركزية</h2>
+        
+        <div class="admin-section" style="border-color: #22c55e;">
+            <label style="color: #22c55e;">➕ إضافة برنامج جديد للنظام</label>
+            <input type="text" id="adm_new_name" placeholder="مثلاً: تطبيق ليفلز">
+            <button onclick="addSystem()" style="width: 100%; margin-top: 10px; background: #22c55e; color: #000; font-weight: bold; border: none; padding: 12px; border-radius: 12px; cursor: pointer;">إنشاء البرنامج</button>
+        </div>
+
+        <div id="adm_edit_area" style="display: none;">
+            <h3 style="color: gold; border-right: 4px solid gold; padding-right: 15px;">تعديل: <span id="adm_target_name"></span></h3>
+            
+            <div class="admin-section">
+                <label>إعدادات الربط (تليجرام و إكسل)</label>
+                <input type="text" id="adm_sheet" placeholder="رابط Google Script">
+                <input type="text" id="adm_token" placeholder="توكن بوت التليجرام" style="margin-top: 5px;">
+                <input type="text" id="adm_chatid" placeholder="Chat ID" style="margin-top: 5px;">
+            </div>
+
+            <div class="admin-section">
+                <label>إعدادات الواجهة</label>
+                <input type="text" id="adm_l_uid" placeholder="اسم خانة الأيدي">
+                <input type="text" id="adm_warn" placeholder="نص التحذير" style="margin-top: 5px;">
+                <input type="text" id="adm_aid" placeholder="ID السحب الخاص بك" style="margin-top: 5px;">
+                <input type="text" id="adm_aname" placeholder="اسم المستلم" style="margin-top: 5px;">
+            </div>
+
+            <div class="admin-section">
+                <label>نظام الحساب</label>
+                <select id="adm_mode" onchange="toggleAdmPoints()">
+                    <option value="usd">دولار فقط</option>
+                    <option value="points">نقاط + دولار</option>
+                </select>
+                <div id="adm_pts_sub" style="margin-top: 10px; display: none;">
+                    <input type="text" id="adm_l_pts" placeholder="اسم خانة النقاط">
+                    <input type="number" id="adm_p_rate" placeholder="كل كم نقطة = 1 دولار؟" style="margin-top: 5px;">
+                </div>
+            </div>
+
+            <div class="admin-section">
+                <label>الأسعار (للدولار الواحد)</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="number" step="0.1" id="adm_rv" placeholder="سعر الكاش">
+                    <input type="number" step="0.1" id="adm_ra" placeholder="سعر الوكيل">
+                </div>
+                
+                <label style="margin-top: 15px; display: block;">👥 إدارة الوكلاء المخصصين:</label>
+                <div id="adm_agents_list"></div>
+                <button onclick="addRow()" style="width: 100%; background: #333; color: #fff; border: none; padding: 10px; border-radius: 10px; cursor: pointer; margin-top: 10px;">+ إضافة وكيل جديد</button>
+            </div>
+
+            <button onclick="saveAll()" class="submit-btn">حفظ كل التغييرات ✅</button>
+            <button onclick="deleteSystem()" style="width: 100%; background: #441111; color: #ff4d4d; border: 1px solid #ff4d4d; margin-top: 15px; padding: 10px; border-radius: 12px; cursor: pointer;">حذف البرنامج نهائياً 🗑️</button>
+        </div>
+
+        <button onclick="document.getElementById('adminScreen').style.display='none'" style="width: 100%; background: #222; color: #fff; border: none; margin-top: 20px; padding: 15px; border-radius: 15px; cursor: pointer;">إغلاق لوحة التحكم</button>
     </div>
 </div>
 
 <script>
-    // --- نفس إعدادات السحابة اللي كانت شغالة ---
+    // تهيئة فايربيز (نفس الرابط والقاعدة)
     const firebaseConfig = {
-        apiKey: "AIzaSyAalmOWMUhvCi_PuFSUbXRpbe1hmGyer7s",
-        authDomain: "karem-store.firebaseapp.com",
-        databaseURL: "https://karem-store-default-rtdb.firebaseio.com",
-        projectId: "karem-store",
-        storageBucket: "karem-store.firebasestorage.app",
-        messagingSenderId: "898294902448",
-        appId: "1:898294902448:web:23cbee5afd72adcb67d575"
+        apiKey: "AIzaSyDp1PmSbyiyP-cEZyPy9sK3FnKKKhbnJKQ",
+        authDomain: "karak-13101.firebaseapp.com",
+        projectId: "karak-13101",
+        databaseURL: "https://karak-13101-default-rtdb.firebaseio.com"
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    let user = null; let selP = null;
+    let systems = {};
+    let activeID = "";
 
-    function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.querySelector('.overlay').classList.toggle('active'); }
-    function openPage(id) { closePages(); if(id==='sidebar') toggleMenu(); else document.getElementById(id).classList.add('active'); }
-    function closePages() { document.querySelectorAll('.full-page').forEach(p => p.classList.remove('active')); }
+    // جلب البيانات ومزامنتها لحظياً
+    db.ref('Helmy_Master_System').on('value', (snap) => {
+        systems = snap.val() || { "كرك": { rv:45, ra:46, aid:"800050", aname:"Helmy Fire", warn:"الدفع خلال 24 ساعة", l_uid:"🆔 الأيدي", mode:"usd", agents:{} } };
+        drawTabs();
+        if(!activeID) selectSystem("كرك");
+        else selectSystem(activeID);
+    });
 
-    // --- تسجيل الدخول ---
-    function handleAuth() {
-        const e = document.getElementById('l-email').value.replace(/\./g, '_').toLowerCase();
-        const p = document.getElementById('l-pass').value;
-        if(e === 'admin@helmy_com' && p === '123123') { setup({ name: 'كريم (المدير)', email: e, role: 'admin', balance: 999999 }); return; }
-        db.ref('users/'+e).once('value', s => {
-            if(s.exists() && s.val().pass === p) setup(s.val());
-            else if(!s.exists()) {
-                const u = { name: 'وكيل جديد', email: e, pass: p, role: 'user', balance: 0 };
-                db.ref('users/'+e).set(u); setup(u);
-            } else alert("بيانات غير صحيحة");
+    function drawTabs() {
+        const container = document.getElementById('navTabs');
+        container.innerHTML = '';
+        for (let name in systems) {
+            const btn = document.createElement('button');
+            btn.className = `tab-btn ${activeID === name ? 'active' : ''}`;
+            btn.innerText = name;
+            btn.onclick = () => selectSystem(name);
+            container.appendChild(btn);
+        }
+    }
+
+    function selectSystem(name) {
+        activeID = name;
+        const data = systems[name];
+        document.getElementById('userForm').style.display = 'block';
+        document.getElementById('app_title').innerText = name;
+        document.getElementById('app_warn').innerText = data.warn || "";
+        document.getElementById('app_aid').innerText = data.aid || "";
+        document.getElementById('app_aname').innerText = data.aname || "";
+        document.getElementById('label_uid').innerText = data.l_uid || "الأيدي";
+
+        if(data.mode === 'points') {
+            document.getElementById('pointsGroup').style.display = 'block';
+            document.getElementById('label_points').innerText = data.l_pts || "النقاط";
+            document.getElementById('inp_usd').readOnly = true;
+            document.getElementById('inp_usd').style.opacity = "0.6";
+        } else {
+            document.getElementById('pointsGroup').style.display = 'none';
+            document.getElementById('inp_usd').readOnly = false;
+            document.getElementById('inp_usd').style.opacity = "1";
+        }
+
+        const vSelect = document.getElementById('inp_vip_list');
+        vSelect.innerHTML = '<option value="">-- اختر كود الوكيل --</option>';
+        if(data.agents) {
+            for(let code in data.agents) {
+                let opt = document.createElement('option');
+                opt.value = code; opt.text = code;
+                vSelect.add(opt);
+            }
+        }
+        drawTabs();
+        runCalc();
+    }
+
+    function runCalc() {
+        if(!activeID) return;
+        const d = systems[activeID];
+        if(d.mode === 'points') {
+            const pts = parseFloat(document.getElementById('inp_points').value) || 0;
+            const factor = parseFloat(d.p_rate) || 1;
+            document.getElementById('inp_usd').value = (pts / factor).toFixed(2);
+        }
+
+        const usd = parseFloat(document.getElementById('inp_usd').value) || 0;
+        const method = document.getElementById('inp_method').value;
+        let rate = d.rv;
+
+        if(method === 'agent_all') rate = d.ra;
+        else if(method === 'agent_vip') {
+            const c = document.getElementById('inp_vip_list').value;
+            rate = (d.agents && d.agents[c]) ? d.agents[c] : d.ra;
+        }
+
+        document.getElementById('rate_info').innerText = "سعر الدولار المطبق: " + rate;
+        document.getElementById('res_egp').innerText = (usd * rate).toFixed(2) + " ج.م";
+        return { totalEGP: (usd * rate).toFixed(2), currentRate: rate };
+    }
+
+    function updateView() {
+        document.getElementById('vipGroup').style.display = (document.getElementById('inp_method').value === 'agent_vip') ? 'block' : 'none';
+        runCalc();
+    }
+
+    // إدارة الإدارة
+    function openAdmin() {
+        if(prompt("كلمة السر للإدارة:") !== "1997") return;
+        document.getElementById('adminScreen').style.display = 'block';
+        if(activeID) {
+            const d = systems[activeID];
+            document.getElementById('adm_target_name').innerText = activeID;
+            document.getElementById('adm_sheet').value = d.sheet || "";
+            document.getElementById('adm_token').value = d.token || "";
+            document.getElementById('adm_chatid').value = d.chatid || "";
+            document.getElementById('adm_l_uid').value = d.l_uid || "";
+            document.getElementById('adm_warn').value = d.warn || "";
+            document.getElementById('adm_aid').value = d.aid || "";
+            document.getElementById('adm_aname').value = d.aname || "";
+            document.getElementById('adm_mode').value = d.mode || "usd";
+            document.getElementById('adm_l_pts').value = d.l_pts || "";
+            document.getElementById('adm_p_rate').value = d.p_rate || "";
+            document.getElementById('adm_rv').value = d.rv || 45;
+            document.getElementById('adm_ra').value = d.ra || 46;
+            
+            toggleAdmPoints();
+            const list = document.getElementById('adm_agents_list');
+            list.innerHTML = '';
+            if(d.agents) { for(let c in d.agents) addRow(c, d.agents[c]); }
+            document.getElementById('adm_edit_area').style.display = 'block';
+        }
+    }
+
+    function addRow(c="", p="") {
+        const div = document.createElement('div');
+        div.className = 'agent-item';
+        div.innerHTML = `<input type="text" class="c-code" value="${c}" placeholder="الكود"><input type="number" step="0.1" class="c-price" value="${p}" placeholder="السعر"><button onclick="this.parentElement.remove()" style="background:red; color:white; border:none; border-radius:8px; padding:5px 10px;">X</button>`;
+        document.getElementById('adm_agents_list').appendChild(div);
+    }
+
+    function toggleAdmPoints() {
+        document.getElementById('adm_pts_sub').style.display = (document.getElementById('adm_mode').value === 'points') ? 'block' : 'none';
+    }
+
+    function addSystem() {
+        const n = document.getElementById('adm_new_name').value.trim();
+        if(!n) return;
+        db.ref('Helmy_Master_System/' + n).set({ rv:45, ra:46, aid:"000", aname:"Admin", mode:"usd" });
+        document.getElementById('adm_new_name').value = "";
+    }
+
+    function saveAll() {
+        const ags = {};
+        document.querySelectorAll('.agent-item').forEach(i => {
+            const c = i.querySelector('.c-code').value, p = i.querySelector('.c-price').value;
+            if(c && p) ags[c] = parseFloat(p);
         });
-    }
 
-    function setup(d) {
-        user = d; closePages();
-        document.getElementById('nav-login').classList.add('hidden');
-        document.getElementById('nav-user').classList.remove('hidden');
-        document.getElementById('side-username').innerText = d.name;
-        db.ref('users/'+d.email+'/balance').on('value', s => {
-            user.balance = s.val() || 0;
-            document.getElementById('u-bal').innerText = user.balance.toFixed(2) + " ج";
-        });
-        if(d.role === 'admin') { document.getElementById('admin-link').classList.remove('hidden'); listenAdmin(); }
-        loadProds();
-    }
-
-    // --- المتجر ---
-    function loadProds() {
-        db.ref('products').on('value', s => {
-            const grid = document.getElementById('grid-prods'); grid.innerHTML = "";
-            s.forEach(p => {
-                grid.innerHTML += `<div class="card" onclick='openBuy(${JSON.stringify(p.val())})'>
-                    <img src="${p.val().img}"><span class="card-price">${p.val().p} ج</span><b>${p.val().n}</b>
-                </div>`;
-            });
-        });
-    }
-
-    function openBuy(p) {
-        if(!user) return openPage('page-login');
-        selP = p; openPage('page-buy');
-        document.getElementById('buy-title').innerText = p.n;
-        calc();
-    }
-
-    function calc() {
-        const q = document.getElementById('in-qty').value;
-        document.getElementById('in-total').innerText = ((q / 1000) * selP.p).toFixed(2);
-    }
-
-    function submitOrder() {
-        const total = parseFloat(document.getElementById('in-total').innerText);
-        const pid = document.getElementById('in-pid').value;
-        if(!pid) return alert("أدخل الـ ID أولاً");
-        if(user.balance < total) return alert("رصيدك لا يكفي!");
-        db.ref('users/'+user.email).update({ balance: (user.balance - total).toFixed(2) });
-        db.ref('orders/buy').push({ uName: user.name, uMail: user.email, prod: selP.n, qty: document.getElementById('in-qty').value, pid, total, status: 'pending' });
-        alert("تم الخصم والطلب قيد المراجعة"); closePages();
-    }
-
-    function submitCharge() {
-        const r = new FileReader();
-        r.onload = e => {
-            db.ref('orders/charge').push({ uName: user.name, uMail: user.email, amount: document.getElementById('c-amt').value, img: e.target.result, status: 'pending' });
-            alert("تم إرسال سكرين الشحن"); closePages();
+        const obj = {
+            sheet: document.getElementById('adm_sheet').value,
+            token: document.getElementById('adm_token').value,
+            chatid: document.getElementById('adm_chatid').value,
+            l_uid: document.getElementById('adm_l_uid').value,
+            warn: document.getElementById('adm_warn').value,
+            aid: document.getElementById('adm_aid').value,
+            aname: document.getElementById('adm_aname').value,
+            mode: document.getElementById('adm_mode').value,
+            l_pts: document.getElementById('adm_l_pts').value,
+            p_rate: document.getElementById('adm_p_rate').value,
+            rv: parseFloat(document.getElementById('adm_rv').value),
+            ra: parseFloat(document.getElementById('adm_ra').value),
+            agents: ags
         };
-        r.readAsDataURL(document.getElementById('c-file').files[0]);
+        db.ref('Helmy_Master_System/' + activeID).update(obj).then(() => alert("تم الحفظ بنجاح ✅"));
     }
 
-    // --- لوحة التحكم ---
-    function listenAdmin() {
-        db.ref('orders/charge').on('value', s => {
-            const box = document.getElementById('adm-charges'); box.innerHTML = "";
-            s.forEach(r => { if(r.val().status==='pending') {
-                box.innerHTML += `<div style="background:#1a1a1a; padding:10px; border-radius:10px; margin-bottom:10px; border:1px solid #444;">
-                    <b>${r.val().uName} (${r.val().amount}ج)</b><br>
-                    <img src="${r.val().img}" style="width:100px; margin:5px 0;"><br>
-                    <button class="btn-done" onclick="appC('${r.key}','${r.val().uMail}',${r.val().amount})">قبول الرصيد ✅</button>
-                </div>`;
-            }});
-        });
-        db.ref('orders/buy').on('value', s => {
-            const box = document.getElementById('adm-orders'); box.innerHTML = "";
-            s.forEach(r => { if(r.val().status==='pending') {
-                box.innerHTML += `<div style="background:#1a1a1a; padding:10px; border-radius:10px; margin-bottom:10px; border:1px solid #444;">
-                    <b>${r.val().prod} لللاعب ${r.val().pid}</b><br>
-                    <button class="btn-done" onclick="doneO('${r.key}')">تم الشحن ✅</button>
-                    <button class="btn-reject" onclick="rejO('${r.key}','${r.val().uMail}',${r.val().total})">رفض وإرجاع المال ❌</button>
-                </div>`;
-            }});
-        });
+    function deleteSystem() {
+        if(confirm("هل أنت متأكد من حذف البرنامج نهائياً؟")) {
+            db.ref('Helmy_Master_System/' + activeID).remove();
+            activeID = "";
+            document.getElementById('adminScreen').style.display = 'none';
+            document.getElementById('userForm').style.display = 'none';
+        }
     }
 
-    function appC(k, m, a) { db.ref('users/'+m).once('value', s => { db.ref('users/'+m).update({ balance: (parseFloat(s.val().balance)+parseFloat(a)).toFixed(2) }); db.ref('orders/charge/'+k).update({status:'done'}); }); }
-    function doneO(k) { db.ref('orders/buy/'+k).update({status:'done'}); }
-    function rejO(k, m, a) { db.ref('users/'+m).once('value', s => { db.ref('users/'+m).update({ balance: (parseFloat(s.val().balance)+parseFloat(a)).toFixed(2) }); db.ref('orders/buy/'+k).update({status:'rejected'}); }); }
-    function addNewProduct() {
-        const r = new FileReader();
-        r.onload = e => db.ref('products').push({ n: document.getElementById('adm-n').value, p: document.getElementById('adm-p').value, img: e.target.result });
-        r.readAsDataURL(document.getElementById('adm-i').files[0]); alert("تم النشر");
+    function copyValue() {
+        navigator.clipboard.writeText(systems[activeID].aid);
+        alert("تم نسخ ID السحب!");
     }
 
-    loadProds();
+    async function sendMasterOrder() {
+        const file = document.getElementById('inp_file').files[0];
+        const uid = document.getElementById('inp_uid').value;
+        const config = systems[activeID];
+
+        if(!file || !uid || !config.token) return alert("من فضلك أكمل البيانات (الصورة، الأيدي، وإعدادات البوت)");
+
+        const { totalEGP, currentRate } = runCalc();
+        const date = new Date().toLocaleString('ar-EG');
+        let ptsTxt = config.mode === 'points' ? `🔢 النقاط: ${document.getElementById('inp_points').value}\n` : '';
+        
+        const msg = `📦 طلب سحب جديد (${activeID})\n` +
+                    `━━━━━━━━━━━━\n` +
+                    `🆔 الأيدي: ${uid}\n` +
+                    `${ptsTxt}` +
+                    `💵 المبلغ: ${document.getElementById('inp_usd').value}$\n` +
+                    `💹 سعر الصرف: ${currentRate}\n` +
+                    `🇪🇬 الإجمالي: ${totalEGP} ج.م\n` +
+                    `💳 الطريقة: ${document.getElementById('inp_method').value}\n` +
+                    `🏦 المحفظة: ${document.getElementById('inp_wallet').value}\n` +
+                    `━━━━━━━━━━━━\n` +
+                    `⏰ الوقت: ${date}`;
+
+        try {
+            const fd = new FormData();
+            fd.append('chat_id', config.chatid);
+            fd.append('photo', file);
+            fd.append('caption', msg);
+            await fetch(`https://api.telegram.org/bot${config.token}/sendPhoto`, { method: 'POST', body: fd });
+
+            // هنا نترك المكان جاهزاً للربط بـ Google Sheet في الخطوة القادمة
+            if(config.sheet) {
+                // سنقوم ببرمجة هذا الجزء فوراً عند بدء العمل على الشيت
+                console.log("إرسال للـ Sheet مفعل");
+            }
+
+            alert("تم إرسال طلبك بنجاح! سيتم المراجعة قريباً.");
+            location.reload();
+        } catch(e) { alert("حدث خطأ في الإرسال، تحقق من التوكن"); }
+    }
 </script>
+
 </body>
 </html>
